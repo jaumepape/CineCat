@@ -1,0 +1,716 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<meta name="design_doc_mode" content="canvas">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+@keyframes ccShimmer { 0%{background-position:200% 0} 100%{background-position:-200% 0} }
+@keyframes ccFade { from{opacity:0;transform:translateY(7px)} to{opacity:1;transform:none} }
+*{box-sizing:border-box}
+input,textarea,button{font-family:Geist,system-ui,sans-serif}
+input::placeholder,textarea::placeholder{color:#5d636c}
+</style>
+</helmet>
+
+<!-- ============ SECCIÓ: SISTEMA DE DISSENY ============ -->
+<div data-drags-parent="1" style="position:absolute;left:80px;top:54px;font-family:'Geist Mono',monospace;font-size:13px;letter-spacing:.2em;color:#8a9098;font-weight:500">CINECAT — SISTEMA DE DISSENY</div>
+
+<div style="position:absolute;left:80px;top:110px;width:1320px">
+  <div data-drags-parent="1" style="position:absolute;top:-25px;left:2px;font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.1em;color:#7c828b">00 · DS</div>
+  <div data-screen-label="Sistema de disseny" style="background:#0d0e11;border:1px solid rgba(255,255,255,.08);border-radius:14px;overflow:hidden;box-shadow:0 24px 60px rgba(0,0,0,.45);font-family:Geist,system-ui,sans-serif">
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:22px 28px;border-bottom:1px solid rgba(255,255,255,.07)">
+      <div style="display:flex;align-items:center;gap:11px">
+        <div style="width:30px;height:30px;border-radius:8px;background:#2dd4bf;display:flex;align-items:center;justify-content:center;color:#06231f;font-weight:700;font-size:17px">C</div>
+        <div>
+          <div style="font-size:19px;font-weight:700;color:#eef0f2;letter-spacing:-.01em">Cine<span style="color:#2dd4bf">Cat</span></div>
+        </div>
+      </div>
+      <div style="font-family:'Geist Mono',monospace;font-size:11px;color:#6b7177;letter-spacing:.08em">TEMA FOSC · ACCENT TEAL · GEIST</div>
+    </div>
+    <div style="padding:26px 28px;display:flex;flex-direction:column;gap:26px">
+      <!-- Paleta -->
+      <div>
+        <div style="font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.14em;color:#6b7177;margin-bottom:14px">PALETA</div>
+        <div style="display:grid;grid-template-columns:repeat(6,1fr);gap:14px">
+          <div><div style="height:58px;border-radius:9px;background:#0d0e11;border:1px solid rgba(255,255,255,.12)"></div><div style="margin-top:8px;font-size:12px;color:#eef0f2;font-weight:500">Fons</div><div style="font-family:'Geist Mono',monospace;font-size:10.5px;color:#6b7177">#0D0E11</div></div>
+          <div><div style="height:58px;border-radius:9px;background:#16181d;border:1px solid rgba(255,255,255,.08)"></div><div style="margin-top:8px;font-size:12px;color:#eef0f2;font-weight:500">Superfície</div><div style="font-family:'Geist Mono',monospace;font-size:10.5px;color:#6b7177">#16181D</div></div>
+          <div><div style="height:58px;border-radius:9px;background:#1d2026;border:1px solid rgba(255,255,255,.08)"></div><div style="margin-top:8px;font-size:12px;color:#eef0f2;font-weight:500">Elevat</div><div style="font-family:'Geist Mono',monospace;font-size:10.5px;color:#6b7177">#1D2026</div></div>
+          <div><div style="height:58px;border-radius:9px;background:#eef0f2"></div><div style="margin-top:8px;font-size:12px;color:#eef0f2;font-weight:500">Text</div><div style="font-family:'Geist Mono',monospace;font-size:10.5px;color:#6b7177">#EEF0F2</div></div>
+          <div><div style="height:58px;border-radius:9px;background:#2dd4bf"></div><div style="margin-top:8px;font-size:12px;color:#eef0f2;font-weight:500">Accent</div><div style="font-family:'Geist Mono',monospace;font-size:10.5px;color:#6b7177">#2DD4BF</div></div>
+          <div><div style="height:58px;border-radius:9px;background:linear-gradient(135deg,#2dd4bf,#1f4f4a)"></div><div style="margin-top:8px;font-size:12px;color:#eef0f2;font-weight:500">Nota</div><div style="font-family:'Geist Mono',monospace;font-size:10.5px;color:#6b7177">teal</div></div>
+        </div>
+      </div>
+      <!-- fila inferior -->
+      <div style="display:grid;grid-template-columns:1.3fr 0.9fr 1.4fr;gap:26px">
+        <!-- tipografia -->
+        <div>
+          <div style="font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.14em;color:#6b7177;margin-bottom:14px">TIPOGRAFIA</div>
+          <div style="font-size:46px;font-weight:700;color:#eef0f2;line-height:1;letter-spacing:-.02em">Geist</div>
+          <div style="margin-top:6px;font-size:13px;color:#9298a1">Interfície · títols · cos de text</div>
+          <div style="margin-top:14px;display:flex;gap:14px;align-items:baseline">
+            <span style="font-size:18px;color:#eef0f2;font-weight:400">Aa</span>
+            <span style="font-size:18px;color:#eef0f2;font-weight:500">Aa</span>
+            <span style="font-size:18px;color:#eef0f2;font-weight:600">Aa</span>
+            <span style="font-size:18px;color:#eef0f2;font-weight:700">Aa</span>
+            <span style="font-family:'Geist Mono',monospace;font-size:12px;color:#6b7177;margin-left:4px">400 / 500 / 600 / 700</span>
+          </div>
+          <div style="margin-top:16px;padding-top:14px;border-top:1px solid rgba(255,255,255,.07)">
+            <div style="font-family:'Geist Mono',monospace;font-size:18px;color:#2dd4bf">7,8 / 10</div>
+            <div style="font-family:'Geist Mono',monospace;font-size:12px;color:#6b7177;margin-top:3px">Geist Mono · notes i metadades</div>
+          </div>
+        </div>
+        <!-- targeta -->
+        <div>
+          <div style="font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.14em;color:#6b7177;margin-bottom:14px">TARGETA</div>
+          <div style="max-width:175px">
+            <dc-import name="MovieCard" movie="{{ cardDemo }}" hint-size="100%,300px"></dc-import>
+          </div>
+        </div>
+        <!-- selector + botons -->
+        <div>
+          <div style="font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.14em;color:#6b7177;margin-bottom:14px">SELECTOR DE NOTA 1–10</div>
+          <div style="background:#16181d;border:1px solid rgba(255,255,255,.08);border-radius:11px;padding:18px">
+            <dc-import name="RatingSelector" default="{{ eight }}" hint-size="100%,90px"></dc-import>
+          </div>
+          <div style="font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.14em;color:#6b7177;margin:18px 0 12px">BOTONS I XIPS</div>
+          <div style="display:flex;flex-wrap:wrap;gap:10px;align-items:center">
+            <button style="background:#2dd4bf;color:#06231f;border:none;padding:10px 18px;border-radius:9px;font-weight:600;font-size:13.5px;cursor:pointer">Valora</button>
+            <button style="background:transparent;color:#eef0f2;border:1px solid rgba(255,255,255,.16);padding:9px 16px;border-radius:9px;font-weight:500;font-size:13.5px;cursor:pointer">Inicia sessió</button>
+            <span style="display:inline-flex;align-items:center;padding:7px 13px;border-radius:999px;font-size:12.5px;font-weight:500;background:#1d2026;color:#9298a1;border:1px solid rgba(255,255,255,.08)">Drama</span>
+            <span style="display:inline-flex;align-items:center;padding:7px 13px;border-radius:999px;font-size:12.5px;font-weight:600;background:rgba(45,212,191,.15);color:#2dd4bf;border:1px solid rgba(45,212,191,.3)">Tots</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ SECCIÓ: WEB PÚBLICA ============ -->
+<div data-drags-parent="1" style="position:absolute;left:80px;top:1010px;font-family:'Geist Mono',monospace;font-size:13px;letter-spacing:.2em;color:#8a9098;font-weight:500">WEB · ÀREA PÚBLICA</div>
+
+<!-- 1. CATÀLEG — resultats -->
+<div style="position:absolute;left:80px;top:1066px;width:1320px">
+  <div data-drags-parent="1" style="position:absolute;top:-25px;left:2px;font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.1em;color:#7c828b">01 · CATÀLEG</div>
+  <div data-screen-label="Catàleg" style="background:#0d0e11;border:1px solid rgba(255,255,255,.08);border-radius:14px;overflow:hidden;box-shadow:0 24px 60px rgba(0,0,0,.45);font-family:Geist,system-ui,sans-serif">
+    <!-- header -->
+    <div style="height:62px;display:flex;align-items:center;gap:20px;padding:0 26px;border-bottom:1px solid rgba(255,255,255,.07);background:rgba(13,14,17,.96)">
+      <div style="display:flex;align-items:center;gap:9px">
+        <div style="width:26px;height:26px;border-radius:7px;background:#2dd4bf;display:flex;align-items:center;justify-content:center;color:#06231f;font-weight:700;font-size:15px">C</div>
+        <div style="font-size:17px;font-weight:700;color:#eef0f2;letter-spacing:-.01em">Cine<span style="color:#2dd4bf">Cat</span></div>
+      </div>
+      <nav style="display:flex;gap:2px;margin-left:8px">
+        <span style="padding:7px 13px;border-radius:8px;font-size:13.5px;font-weight:600;color:#eef0f2;background:#1d2026">Catàleg</span>
+        <span style="padding:7px 13px;border-radius:8px;font-size:13.5px;font-weight:500;color:#9298a1">Novetats</span>
+        <span style="padding:7px 13px;border-radius:8px;font-size:13.5px;font-weight:500;color:#9298a1">Top valorades</span>
+      </nav>
+      <div style="margin-left:auto;display:flex;align-items:center;gap:12px">
+        <button style="background:transparent;color:#eef0f2;border:1px solid rgba(255,255,255,.16);padding:8px 15px;border-radius:9px;font-weight:500;font-size:13.5px;cursor:pointer">Inicia sessió</button>
+      </div>
+    </div>
+    <!-- subbar cerca + filtre -->
+    <div style="padding:22px 26px 0">
+      <div style="display:flex;gap:12px;align-items:center">
+        <div style="flex:1;display:flex;align-items:center;gap:10px;background:#16181d;border:1px solid rgba(255,255,255,.1);border-radius:10px;padding:0 14px;height:44px">
+          <span style="position:relative;width:15px;height:15px;display:inline-block;flex-shrink:0"><span style="position:absolute;width:10px;height:10px;border:1.6px solid #6b7177;border-radius:50%;top:0;left:0"></span><span style="position:absolute;width:6px;height:1.6px;background:#6b7177;transform:rotate(45deg);bottom:1px;right:-1px"></span></span>
+          <input type="text" readOnly value="" placeholder="Cerca per títol…" style="flex:1;background:transparent;border:none;outline:none;color:#eef0f2;font-size:14px" />
+        </div>
+        <div style="display:flex;align-items:center;gap:9px;background:#16181d;border:1px solid rgba(255,255,255,.1);border-radius:10px;padding:0 14px;height:44px;color:#9298a1;font-size:14px;cursor:pointer">Gènere: <span style="color:#eef0f2;font-weight:500">Tots</span> <span style="color:#6b7177;font-size:11px">▾</span></div>
+      </div>
+      <div style="display:flex;gap:9px;margin-top:16px;flex-wrap:wrap">
+        <span style="display:inline-flex;align-items:center;padding:7px 13px;border-radius:999px;font-size:12.5px;font-weight:600;background:rgba(45,212,191,.15);color:#2dd4bf;border:1px solid rgba(45,212,191,.3)">Tots</span>
+        <span style="display:inline-flex;align-items:center;padding:7px 13px;border-radius:999px;font-size:12.5px;font-weight:500;background:#1d2026;color:#9298a1;border:1px solid rgba(255,255,255,.08)">Drama</span>
+        <span style="display:inline-flex;align-items:center;padding:7px 13px;border-radius:999px;font-size:12.5px;font-weight:500;background:#1d2026;color:#9298a1;border:1px solid rgba(255,255,255,.08)">Ciència-ficció</span>
+        <span style="display:inline-flex;align-items:center;padding:7px 13px;border-radius:999px;font-size:12.5px;font-weight:500;background:#1d2026;color:#9298a1;border:1px solid rgba(255,255,255,.08)">Thriller</span>
+        <span style="display:inline-flex;align-items:center;padding:7px 13px;border-radius:999px;font-size:12.5px;font-weight:500;background:#1d2026;color:#9298a1;border:1px solid rgba(255,255,255,.08)">Terror</span>
+        <span style="display:inline-flex;align-items:center;padding:7px 13px;border-radius:999px;font-size:12.5px;font-weight:500;background:#1d2026;color:#9298a1;border:1px solid rgba(255,255,255,.08)">Romanç</span>
+        <span style="display:inline-flex;align-items:center;padding:7px 13px;border-radius:999px;font-size:12.5px;font-weight:500;background:#1d2026;color:#9298a1;border:1px solid rgba(255,255,255,.08)">Aventura</span>
+      </div>
+    </div>
+    <div style="display:flex;align-items:baseline;justify-content:space-between;padding:22px 26px 16px">
+      <div style="font-size:19px;font-weight:700;color:#eef0f2">Catàleg <span style="color:#6b7177;font-weight:500;font-size:14px;font-family:'Geist Mono',monospace">· 248 pel·lícules</span></div>
+      <div style="font-size:13px;color:#9298a1">Ordena: <span style="color:#eef0f2;font-weight:500">Millor valorades</span> <span style="color:#6b7177;font-size:11px">▾</span></div>
+    </div>
+    <!-- graella -->
+    <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:20px;padding:0 26px 30px">
+      <sc-for list="{{ movies }}" as="m" hint-placeholder-count="10">
+        <dc-import name="MovieCard" movie="{{ m }}" hint-size="100%,300px"></dc-import>
+      </sc-for>
+    </div>
+  </div>
+</div>
+
+<!-- 1b. CATÀLEG — sense resultats -->
+<div style="position:absolute;left:1480px;top:1066px;width:1320px">
+  <div data-drags-parent="1" style="position:absolute;top:-25px;left:2px;font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.1em;color:#7c828b">01b · CATÀLEG — SENSE RESULTATS</div>
+  <div data-screen-label="Catàleg sense resultats" style="background:#0d0e11;border:1px solid rgba(255,255,255,.08);border-radius:14px;overflow:hidden;box-shadow:0 24px 60px rgba(0,0,0,.45);font-family:Geist,system-ui,sans-serif">
+    <div style="height:62px;display:flex;align-items:center;gap:20px;padding:0 26px;border-bottom:1px solid rgba(255,255,255,.07);background:rgba(13,14,17,.96)">
+      <div style="display:flex;align-items:center;gap:9px"><div style="width:26px;height:26px;border-radius:7px;background:#2dd4bf;display:flex;align-items:center;justify-content:center;color:#06231f;font-weight:700;font-size:15px">C</div><div style="font-size:17px;font-weight:700;color:#eef0f2">Cine<span style="color:#2dd4bf">Cat</span></div></div>
+      <div style="margin-left:auto"><button style="background:transparent;color:#eef0f2;border:1px solid rgba(255,255,255,.16);padding:8px 15px;border-radius:9px;font-weight:500;font-size:13.5px;cursor:pointer">Inicia sessió</button></div>
+    </div>
+    <div style="padding:22px 26px 0">
+      <div style="display:flex;gap:12px;align-items:center">
+        <div style="flex:1;display:flex;align-items:center;gap:10px;background:#16181d;border:1px solid rgba(45,212,191,.25);border-radius:10px;padding:0 14px;height:44px">
+          <span style="position:relative;width:15px;height:15px;display:inline-block;flex-shrink:0"><span style="position:absolute;width:10px;height:10px;border:1.6px solid #6b7177;border-radius:50%;top:0;left:0"></span><span style="position:absolute;width:6px;height:1.6px;background:#6b7177;transform:rotate(45deg);bottom:1px;right:-1px"></span></span>
+          <input type="text" readOnly value="zombis al Montseny" style="flex:1;background:transparent;border:none;outline:none;color:#eef0f2;font-size:14px" />
+        </div>
+        <div style="display:flex;align-items:center;gap:9px;background:#16181d;border:1px solid rgba(255,255,255,.1);border-radius:10px;padding:0 14px;height:44px;color:#9298a1;font-size:14px">Gènere: <span style="color:#eef0f2;font-weight:500">Terror</span> <span style="color:#6b7177;font-size:11px">▾</span></div>
+      </div>
+    </div>
+    <!-- estat buit -->
+    <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:74px 26px 90px">
+      <div style="width:88px;height:120px;border-radius:9px;border:2px dashed rgba(255,255,255,.16);display:flex;align-items:center;justify-content:center;margin-bottom:24px">
+        <span style="position:relative;width:30px;height:30px;display:inline-block"><span style="position:absolute;width:22px;height:22px;border:2px solid #4a5058;border-radius:50%;top:0;left:0"></span><span style="position:absolute;width:12px;height:2px;background:#4a5058;transform:rotate(45deg);bottom:3px;right:-3px"></span></span>
+      </div>
+      <div style="font-size:20px;font-weight:700;color:#eef0f2;margin-bottom:8px">Cap pel·lícula coincideix amb la cerca</div>
+      <div style="font-size:14px;color:#9298a1;max-width:420px;line-height:1.5">No hem trobat resultats per a <span style="color:#eef0f2;font-weight:500">«zombis al Montseny»</span> al gènere Terror. Prova amb un altre títol o esborra els filtres.</div>
+      <div style="display:flex;gap:10px;margin-top:24px">
+        <button style="background:#2dd4bf;color:#06231f;border:none;padding:10px 18px;border-radius:9px;font-weight:600;font-size:13.5px;cursor:pointer">Esborra els filtres</button>
+        <button style="background:transparent;color:#eef0f2;border:1px solid rgba(255,255,255,.16);padding:9px 16px;border-radius:9px;font-weight:500;font-size:13.5px;cursor:pointer">Veure tot el catàleg</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 1c. CATÀLEG — càrrega -->
+<div style="position:absolute;left:2880px;top:1066px;width:1320px">
+  <div data-drags-parent="1" style="position:absolute;top:-25px;left:2px;font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.1em;color:#7c828b">01c · CATÀLEG — CÀRREGA</div>
+  <div data-screen-label="Catàleg càrrega" style="background:#0d0e11;border:1px solid rgba(255,255,255,.08);border-radius:14px;overflow:hidden;box-shadow:0 24px 60px rgba(0,0,0,.45);font-family:Geist,system-ui,sans-serif">
+    <div style="height:62px;display:flex;align-items:center;gap:20px;padding:0 26px;border-bottom:1px solid rgba(255,255,255,.07);background:rgba(13,14,17,.96)">
+      <div style="display:flex;align-items:center;gap:9px"><div style="width:26px;height:26px;border-radius:7px;background:#2dd4bf;display:flex;align-items:center;justify-content:center;color:#06231f;font-weight:700;font-size:15px">C</div><div style="font-size:17px;font-weight:700;color:#eef0f2">Cine<span style="color:#2dd4bf">Cat</span></div></div>
+      <div style="margin-left:auto"><button style="background:transparent;color:#eef0f2;border:1px solid rgba(255,255,255,.16);padding:8px 15px;border-radius:9px;font-weight:500;font-size:13.5px;cursor:pointer">Inicia sessió</button></div>
+    </div>
+    <div style="display:flex;align-items:center;gap:11px;padding:24px 26px 6px">
+      <div style="width:16px;height:16px;border:2px solid rgba(45,212,191,.3);border-top-color:#2dd4bf;border-radius:50%;animation:ccShimmer 0s"></div>
+      <div style="font-size:13.5px;color:#9298a1;font-family:'Geist Mono',monospace">Carregant el catàleg…</div>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:20px;padding:18px 26px 30px">
+      <sc-for list="{{ skeletons }}" as="s" hint-placeholder-count="10">
+        <div>
+          <div style="aspect-ratio:2/3;border-radius:8px;background:linear-gradient(100deg,#16181d 30%,#23272e 50%,#16181d 70%);background-size:200% 100%;animation:ccShimmer 1.3s infinite"></div>
+          <div style="height:12px;border-radius:5px;margin-top:11px;width:85%;background:linear-gradient(100deg,#16181d 30%,#23272e 50%,#16181d 70%);background-size:200% 100%;animation:ccShimmer 1.3s infinite"></div>
+          <div style="height:10px;border-radius:5px;margin-top:7px;width:45%;background:linear-gradient(100deg,#16181d 30%,#23272e 50%,#16181d 70%);background-size:200% 100%;animation:ccShimmer 1.3s infinite"></div>
+        </div>
+      </sc-for>
+    </div>
+  </div>
+</div>
+
+<!-- 2. FITXA DE PEL·LÍCULA -->
+<div style="position:absolute;left:80px;top:2400px;width:1320px">
+  <div data-drags-parent="1" style="position:absolute;top:-25px;left:2px;font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.1em;color:#7c828b">02 · FITXA DE PEL·LÍCULA</div>
+  <div data-screen-label="Fitxa de pel·lícula" style="background:#0d0e11;border:1px solid rgba(255,255,255,.08);border-radius:14px;overflow:hidden;box-shadow:0 24px 60px rgba(0,0,0,.45);font-family:Geist,system-ui,sans-serif">
+    <div style="height:62px;display:flex;align-items:center;gap:20px;padding:0 26px;border-bottom:1px solid rgba(255,255,255,.07);background:rgba(13,14,17,.96)">
+      <div style="display:flex;align-items:center;gap:9px"><div style="width:26px;height:26px;border-radius:7px;background:#2dd4bf;display:flex;align-items:center;justify-content:center;color:#06231f;font-weight:700;font-size:15px">C</div><div style="font-size:17px;font-weight:700;color:#eef0f2">Cine<span style="color:#2dd4bf">Cat</span></div></div>
+      <div style="margin-left:auto"><button style="background:transparent;color:#eef0f2;border:1px solid rgba(255,255,255,.16);padding:8px 15px;border-radius:9px;font-weight:500;font-size:13.5px;cursor:pointer">Inicia sessió</button></div>
+    </div>
+    <!-- backdrop subtil -->
+    <div style="padding:14px 32px 0"><div style="font-size:12.5px;color:#6b7177"><span style="color:#9298a1">Catàleg</span> <span style="margin:0 6px">/</span> Drama <span style="margin:0 6px">/</span> <span style="color:#eef0f2">La Ciutat Submergida</span></div></div>
+    <div style="display:flex;gap:34px;padding:22px 32px 28px">
+      <div style="width:296px;flex-shrink:0">
+        <div style="position:relative;width:296px;aspect-ratio:2/3;border-radius:12px;overflow:hidden;background:#2f4a3e;border:1px solid rgba(255,255,255,.08);box-shadow:0 16px 40px rgba(0,0,0,.5)">
+          <div style="position:absolute;inset:0;background:linear-gradient(155deg,rgba(255,255,255,.12),transparent 42%),linear-gradient(0deg,rgba(0,0,0,.72),transparent 50%)"></div>
+          <div style="position:absolute;top:12px;left:13px;font-family:'Geist Mono',monospace;font-size:9px;letter-spacing:.14em;color:rgba(255,255,255,.55)">CARTELL · 2:3</div>
+          <div style="position:absolute;left:16px;right:16px;bottom:16px;font-size:22px;font-weight:700;color:#fff;line-height:1.15;text-shadow:0 1px 4px rgba(0,0,0,.55)">La Ciutat Submergida</div>
+        </div>
+      </div>
+      <div style="flex:1;min-width:0">
+        <div style="display:flex;gap:8px;margin-bottom:12px">
+          <span style="display:inline-flex;align-items:center;padding:5px 12px;border-radius:999px;font-size:12px;font-weight:500;background:#1d2026;color:#9298a1;border:1px solid rgba(255,255,255,.08)">Drama</span>
+          <span style="display:inline-flex;align-items:center;padding:5px 12px;border-radius:999px;font-size:12px;font-weight:500;background:#1d2026;color:#9298a1;border:1px solid rgba(255,255,255,.08)">Misteri</span>
+        </div>
+        <h1 style="font-size:38px;font-weight:700;color:#eef0f2;line-height:1.08;letter-spacing:-.02em;margin:0">La Ciutat Submergida</h1>
+        <div style="margin-top:12px;font-family:'Geist Mono',monospace;font-size:13.5px;color:#9298a1">2021 · 1h 52min · Dir. Aina Roca</div>
+        <div style="display:flex;align-items:center;gap:30px;margin:26px 0 24px">
+          <div style="display:flex;align-items:center;gap:14px">
+            <div style="width:84px;height:84px;border-radius:50%;border:3px solid #2dd4bf;display:flex;align-items:center;justify-content:center;background:rgba(45,212,191,.08)"><span style="font-size:28px;font-weight:700;color:#2dd4bf;font-family:'Geist Mono',monospace">7,8</span></div>
+            <div><div style="font-size:13px;color:#eef0f2;font-weight:600">Nota mitjana</div><div style="font-size:12.5px;color:#9298a1;font-family:'Geist Mono',monospace;margin-top:2px">1.243 valoracions</div></div>
+          </div>
+          <div style="display:flex;gap:10px;margin-left:auto">
+            <button style="background:#2dd4bf;color:#06231f;border:none;padding:11px 20px;border-radius:9px;font-weight:600;font-size:14px;cursor:pointer">Valora aquesta pel·lícula</button>
+            <button style="background:transparent;color:#eef0f2;border:1px solid rgba(255,255,255,.16);padding:10px 16px;border-radius:9px;font-weight:500;font-size:14px;cursor:pointer">+ A la meva llista</button>
+          </div>
+        </div>
+        <div style="font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.14em;color:#6b7177;margin-bottom:8px">SINOPSI</div>
+        <p style="font-size:15px;line-height:1.65;color:#c8ccd2;margin:0;max-width:660px;text-wrap:pretty">Quan una riuada deixa un poble sencer sota l'aigua, una jove cartògrafa torna a casa per dibuixar el mapa d'allò que ja no existeix. Entre records submergits i secrets que suren a la superfície, descobreix que la ciutat amaga molt més del que les aigües s'han endut.</p>
+      </div>
+    </div>
+    <!-- valoracions -->
+    <div style="padding:0 32px 34px">
+      <div style="border-top:1px solid rgba(255,255,255,.08);padding-top:26px">
+        <div style="display:flex;align-items:baseline;justify-content:space-between;margin-bottom:18px">
+          <div style="font-size:20px;font-weight:700;color:#eef0f2">Valoracions <span style="color:#6b7177;font-weight:500;font-size:15px;font-family:'Geist Mono',monospace">· 1.243</span></div>
+          <div style="font-size:13px;color:#9298a1">Ordena: <span style="color:#eef0f2;font-weight:500">Més recents</span> <span style="color:#6b7177;font-size:11px">▾</span></div>
+        </div>
+        <!-- form valorar -->
+        <div style="background:#16181d;border:1px solid rgba(255,255,255,.08);border-radius:12px;padding:22px;margin-bottom:22px">
+          <div style="font-size:15px;font-weight:600;color:#eef0f2;margin-bottom:16px">Deixa la teva valoració</div>
+          <div style="margin-bottom:16px"><dc-import name="RatingSelector" hint-size="100%,90px"></dc-import></div>
+          <textarea readOnly placeholder="Escriu la teva ressenya (opcional)…" style="width:100%;height:84px;resize:none;background:#0d0e11;border:1px solid rgba(255,255,255,.1);border-radius:10px;padding:13px 14px;color:#eef0f2;font-size:14px;line-height:1.5;outline:none"></textarea>
+          <div style="display:flex;align-items:center;gap:14px;margin-top:14px;flex-wrap:wrap">
+            <div style="display:inline-flex;background:#0d0e11;border:1px solid rgba(255,255,255,.1);border-radius:9px;padding:3px">
+              <button onClick="{{ setAnonWeb }}" style="{{ tabAnonWebStyle }}">Anònim</button>
+              <button onClick="{{ setRegWeb }}" style="{{ tabRegWebStyle }}">Com a @joancinema</button>
+            </div>
+            <div style="font-size:12.5px;color:#6b7177">No cal compte — pots valorar de manera anònima.</div>
+            <button style="margin-left:auto;background:#2dd4bf;color:#06231f;border:none;padding:11px 22px;border-radius:9px;font-weight:600;font-size:14px;cursor:pointer">Envia la valoració</button>
+          </div>
+        </div>
+        <!-- llista -->
+        <sc-for list="{{ reviews }}" as="r" hint-placeholder-count="4">
+          <div style="display:flex;gap:14px;padding:18px 0;border-top:1px solid rgba(255,255,255,.06)">
+            <div style="width:40px;height:40px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-weight:600;font-size:15px;color:#fff;background:{{ r.color }}">{{ r.initial }}</div>
+            <div style="flex:1;min-width:0">
+              <div style="display:flex;align-items:center;gap:11px;margin-bottom:6px">
+                <span style="font-size:14px;font-weight:600;color:{{ r.nameColor }}">{{ r.name }}</span>
+                <span style="display:inline-flex;align-items:center;background:rgba(45,212,191,.12);border:1px solid rgba(45,212,191,.28);padding:2px 9px;border-radius:999px;font-size:12px;font-weight:700;color:#2dd4bf;font-family:'Geist Mono',monospace">{{ r.rating }}</span>
+                <span style="font-size:12px;color:#6b7177;font-family:'Geist Mono',monospace;margin-left:auto">{{ r.date }}</span>
+              </div>
+              <p style="margin:0;font-size:14px;line-height:1.6;color:#c8ccd2">{{ r.text }}</p>
+            </div>
+          </div>
+        </sc-for>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 2b. FITXA — sense valoracions -->
+<div style="position:absolute;left:1480px;top:2400px;width:1320px">
+  <div data-drags-parent="1" style="position:absolute;top:-25px;left:2px;font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.1em;color:#7c828b">02b · FITXA — SENSE VALORACIONS</div>
+  <div data-screen-label="Fitxa sense valoracions" style="background:#0d0e11;border:1px solid rgba(255,255,255,.08);border-radius:14px;overflow:hidden;box-shadow:0 24px 60px rgba(0,0,0,.45);font-family:Geist,system-ui,sans-serif">
+    <div style="height:62px;display:flex;align-items:center;gap:20px;padding:0 26px;border-bottom:1px solid rgba(255,255,255,.07);background:rgba(13,14,17,.96)">
+      <div style="display:flex;align-items:center;gap:9px"><div style="width:26px;height:26px;border-radius:7px;background:#2dd4bf;display:flex;align-items:center;justify-content:center;color:#06231f;font-weight:700;font-size:15px">C</div><div style="font-size:17px;font-weight:700;color:#eef0f2">Cine<span style="color:#2dd4bf">Cat</span></div></div>
+      <div style="margin-left:auto"><button style="background:transparent;color:#eef0f2;border:1px solid rgba(255,255,255,.16);padding:8px 15px;border-radius:9px;font-weight:500;font-size:13.5px;cursor:pointer">Inicia sessió</button></div>
+    </div>
+    <div style="display:flex;gap:34px;padding:24px 32px 24px">
+      <div style="width:230px;flex-shrink:0">
+        <div style="position:relative;width:230px;aspect-ratio:2/3;border-radius:12px;overflow:hidden;background:#6b5a2e;border:1px solid rgba(255,255,255,.08);box-shadow:0 16px 40px rgba(0,0,0,.5)">
+          <div style="position:absolute;inset:0;background:linear-gradient(155deg,rgba(255,255,255,.12),transparent 42%),linear-gradient(0deg,rgba(0,0,0,.72),transparent 50%)"></div>
+          <div style="position:absolute;left:14px;right:14px;bottom:14px;font-size:19px;font-weight:700;color:#fff;line-height:1.15">Cor de Tramuntana</div>
+        </div>
+      </div>
+      <div style="flex:1">
+        <div style="display:flex;gap:8px;margin-bottom:12px"><span style="display:inline-flex;padding:5px 12px;border-radius:999px;font-size:12px;font-weight:500;background:#1d2026;color:#9298a1;border:1px solid rgba(255,255,255,.08)">Romanç</span><span style="display:inline-flex;padding:5px 12px;border-radius:999px;font-size:12px;font-weight:500;background:#1d2026;color:#9298a1;border:1px solid rgba(255,255,255,.08)">Drama</span></div>
+        <h1 style="font-size:34px;font-weight:700;color:#eef0f2;line-height:1.08;letter-spacing:-.02em;margin:0">Cor de Tramuntana</h1>
+        <div style="margin-top:12px;font-family:'Geist Mono',monospace;font-size:13.5px;color:#9298a1">2024 · 1h 55min · Dir. Jordi Ferran</div>
+        <div style="display:flex;align-items:center;gap:14px;margin:24px 0">
+          <div style="width:74px;height:74px;border-radius:50%;border:3px solid rgba(255,255,255,.14);display:flex;align-items:center;justify-content:center"><span style="font-size:22px;font-weight:700;color:#5d636c;font-family:'Geist Mono',monospace">—</span></div>
+          <div><div style="font-size:13px;color:#eef0f2;font-weight:600">Encara sense nota</div><div style="font-size:12.5px;color:#9298a1;margin-top:2px">0 valoracions</div></div>
+        </div>
+        <p style="font-size:14.5px;line-height:1.6;color:#c8ccd2;margin:0;max-width:620px">Estrena recent. Una història d'amor a contracorrent en un poble assotat pel vent del nord, on tornar a casa significa enfrontar-se al que un va deixar enrere.</p>
+      </div>
+    </div>
+    <div style="padding:0 32px 34px">
+      <div style="border-top:1px solid rgba(255,255,255,.08);padding-top:26px">
+        <div style="font-size:20px;font-weight:700;color:#eef0f2;margin-bottom:18px">Valoracions <span style="color:#6b7177;font-weight:500;font-size:15px;font-family:'Geist Mono',monospace">· 0</span></div>
+        <div style="background:#16181d;border:1px solid rgba(255,255,255,.08);border-radius:12px;padding:22px;margin-bottom:22px">
+          <div style="font-size:15px;font-weight:600;color:#eef0f2;margin-bottom:16px">Deixa la teva valoració</div>
+          <div style="margin-bottom:16px"><dc-import name="RatingSelector" hint-size="100%,90px"></dc-import></div>
+          <textarea readOnly placeholder="Escriu la teva ressenya (opcional)…" style="width:100%;height:72px;resize:none;background:#0d0e11;border:1px solid rgba(255,255,255,.1);border-radius:10px;padding:13px 14px;color:#eef0f2;font-size:14px;outline:none"></textarea>
+          <div style="display:flex;align-items:center;gap:14px;margin-top:14px;flex-wrap:wrap">
+            <div style="display:inline-flex;background:#0d0e11;border:1px solid rgba(255,255,255,.1);border-radius:9px;padding:3px">
+              <button style="flex:1;padding:8px 14px;border:none;border-radius:7px;cursor:pointer;font-size:12.5px;font-weight:600;background:rgba(45,212,191,.15);color:#2dd4bf;white-space:nowrap">Anònim</button>
+              <button style="flex:1;padding:8px 14px;border:none;border-radius:7px;cursor:pointer;font-size:12.5px;font-weight:500;background:transparent;color:#7c828b;white-space:nowrap">Com a @joancinema</button>
+            </div>
+            <button style="margin-left:auto;background:#2dd4bf;color:#06231f;border:none;padding:11px 22px;border-radius:9px;font-weight:600;font-size:14px;cursor:pointer">Envia la valoració</button>
+          </div>
+        </div>
+        <div style="display:flex;flex-direction:column;align-items:center;text-align:center;padding:42px 26px 50px;border:1px dashed rgba(255,255,255,.12);border-radius:12px">
+          <div style="width:54px;height:54px;border-radius:50%;background:#1d2026;display:flex;align-items:center;justify-content:center;margin-bottom:16px"><span style="font-size:24px;font-weight:700;color:#2dd4bf;font-family:'Geist Mono',monospace">1</span></div>
+          <div style="font-size:17px;font-weight:700;color:#eef0f2;margin-bottom:7px">Encara no hi ha valoracions</div>
+          <div style="font-size:14px;color:#9298a1;max-width:380px;line-height:1.5">Sigues la primera persona a valorar <span style="color:#eef0f2;font-weight:500">Cor de Tramuntana</span>. Pots fer-ho de manera anònima.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 3. LOGIN / REGISTRE -->
+<div style="position:absolute;left:2880px;top:2400px;width:1160px">
+  <div data-drags-parent="1" style="position:absolute;top:-25px;left:2px;font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.1em;color:#7c828b">03 · INICI DE SESSIÓ / REGISTRE</div>
+  <div data-screen-label="Inici de sessió / Registre" style="background:#0d0e11;border:1px solid rgba(255,255,255,.08);border-radius:14px;overflow:hidden;box-shadow:0 24px 60px rgba(0,0,0,.45);font-family:Geist,system-ui,sans-serif">
+    <div style="height:62px;display:flex;align-items:center;gap:20px;padding:0 26px;border-bottom:1px solid rgba(255,255,255,.07);background:rgba(13,14,17,.96)">
+      <div style="display:flex;align-items:center;gap:9px"><div style="width:26px;height:26px;border-radius:7px;background:#2dd4bf;display:flex;align-items:center;justify-content:center;color:#06231f;font-weight:700;font-size:15px">C</div><div style="font-size:17px;font-weight:700;color:#eef0f2">Cine<span style="color:#2dd4bf">Cat</span></div></div>
+    </div>
+    <div style="padding:30px 40px 40px">
+      <div style="display:flex;align-items:center;gap:12px;background:rgba(45,212,191,.08);border:1px solid rgba(45,212,191,.22);border-radius:11px;padding:14px 18px;margin-bottom:28px">
+        <div style="width:30px;height:30px;border-radius:8px;background:rgba(45,212,191,.16);display:flex;align-items:center;justify-content:center;color:#2dd4bf;font-weight:700;flex-shrink:0">i</div>
+        <div style="font-size:13.5px;color:#c8ccd2;line-height:1.45"><span style="color:#eef0f2;font-weight:600">Iniciar sessió és opcional.</span> Pots valorar qualsevol pel·lícula de manera anònima. Crea un compte només si vols un àlies visible i guardar el teu historial.</div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:24px">
+        <!-- login -->
+        <div style="background:#16181d;border:1px solid rgba(255,255,255,.08);border-radius:13px;padding:26px">
+          <div style="font-size:18px;font-weight:700;color:#eef0f2;margin-bottom:4px">Inicia sessió</div>
+          <div style="font-size:13px;color:#9298a1;margin-bottom:22px">Torna a entrar al teu compte</div>
+          <label style="display:block;font-size:12px;color:#9298a1;font-weight:500;margin-bottom:7px">Correu electrònic</label>
+          <input type="text" readOnly value="joan@exemple.cat" style="width:100%;height:44px;background:#0d0e11;border:1px solid rgba(255,255,255,.1);border-radius:9px;padding:0 13px;color:#eef0f2;font-size:14px;outline:none;margin-bottom:16px" />
+          <label style="display:block;font-size:12px;color:#9298a1;font-weight:500;margin-bottom:7px">Contrasenya</label>
+          <input type="password" readOnly value="placeholder" style="width:100%;height:44px;background:#0d0e11;border:1px solid rgba(255,255,255,.1);border-radius:9px;padding:0 13px;color:#eef0f2;font-size:14px;outline:none;margin-bottom:10px" />
+          <div style="text-align:right;margin-bottom:18px"><span style="font-size:12.5px;color:#2dd4bf;cursor:pointer">Has oblidat la contrasenya?</span></div>
+          <button style="width:100%;background:#2dd4bf;color:#06231f;border:none;height:46px;border-radius:10px;font-weight:600;font-size:14.5px;cursor:pointer">Entra</button>
+        </div>
+        <!-- registre -->
+        <div style="background:#16181d;border:1px solid rgba(255,255,255,.08);border-radius:13px;padding:26px">
+          <div style="font-size:18px;font-weight:700;color:#eef0f2;margin-bottom:4px">Crea un compte</div>
+          <div style="font-size:13px;color:#9298a1;margin-bottom:22px">Tria un àlies per a les teves ressenyes</div>
+          <label style="display:block;font-size:12px;color:#9298a1;font-weight:500;margin-bottom:7px">Àlies públic</label>
+          <input type="text" readOnly value="@joancinema" style="width:100%;height:44px;background:#0d0e11;border:1px solid rgba(255,255,255,.1);border-radius:9px;padding:0 13px;color:#eef0f2;font-size:14px;outline:none;margin-bottom:16px" />
+          <label style="display:block;font-size:12px;color:#9298a1;font-weight:500;margin-bottom:7px">Correu electrònic</label>
+          <input type="text" readOnly placeholder="el-teu@correu.cat" style="width:100%;height:44px;background:#0d0e11;border:1px solid rgba(255,255,255,.1);border-radius:9px;padding:0 13px;color:#eef0f2;font-size:14px;outline:none;margin-bottom:16px" />
+          <label style="display:block;font-size:12px;color:#9298a1;font-weight:500;margin-bottom:7px">Contrasenya</label>
+          <input type="password" readOnly placeholder="Mínim 8 caràcters" style="width:100%;height:44px;background:#0d0e11;border:1px solid rgba(255,255,255,.1);border-radius:9px;padding:0 13px;color:#eef0f2;font-size:14px;outline:none;margin-bottom:18px" />
+          <button style="width:100%;background:transparent;color:#eef0f2;border:1px solid rgba(45,212,191,.4);height:46px;border-radius:10px;font-weight:600;font-size:14.5px;cursor:pointer">Crea el compte</button>
+        </div>
+      </div>
+      <div style="text-align:center;margin-top:24px"><span style="font-size:13.5px;color:#9298a1">o bé </span><span style="font-size:13.5px;color:#2dd4bf;font-weight:500;cursor:pointer">continua com a visitant →</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ SECCIÓ: ADMIN ============ -->
+<div data-drags-parent="1" style="position:absolute;left:80px;top:4100px;font-family:'Geist Mono',monospace;font-size:13px;letter-spacing:.2em;color:#8a9098;font-weight:500">WEB · ÀREA D'ADMINISTRACIÓ</div>
+
+<!-- 4. ADMIN LLISTAT -->
+<div style="position:absolute;left:80px;top:4156px;width:1320px">
+  <div data-drags-parent="1" style="position:absolute;top:-25px;left:2px;font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.1em;color:#7c828b">04 · ADMIN — LLISTAT DEL CATÀLEG</div>
+  <div data-screen-label="Admin llistat" style="background:#0d0e11;border:1px solid rgba(255,255,255,.08);border-radius:14px;overflow:hidden;box-shadow:0 24px 60px rgba(0,0,0,.45);font-family:Geist,system-ui,sans-serif">
+    <div style="height:62px;display:flex;align-items:center;gap:14px;padding:0 26px;border-bottom:1px solid rgba(255,255,255,.07);background:rgba(13,14,17,.96)">
+      <div style="display:flex;align-items:center;gap:9px"><div style="width:26px;height:26px;border-radius:7px;background:#2dd4bf;display:flex;align-items:center;justify-content:center;color:#06231f;font-weight:700;font-size:15px">C</div><div style="font-size:17px;font-weight:700;color:#eef0f2">Cine<span style="color:#2dd4bf">Cat</span></div></div>
+      <span style="font-family:'Geist Mono',monospace;font-size:10px;letter-spacing:.12em;color:#2dd4bf;background:rgba(45,212,191,.12);border:1px solid rgba(45,212,191,.28);padding:3px 9px;border-radius:6px">ADMIN</span>
+      <div style="margin-left:auto;display:flex;align-items:center;gap:12px">
+        <div style="display:flex;align-items:center;gap:9px"><div style="width:30px;height:30px;border-radius:50%;background:#3b3a6b;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:600;font-size:13px">A</div><span style="font-size:13.5px;color:#eef0f2;font-weight:500">admin</span></div>
+      </div>
+    </div>
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:24px 26px 18px">
+      <div>
+        <div style="font-size:21px;font-weight:700;color:#eef0f2">Gestió del catàleg</div>
+        <div style="font-size:13px;color:#9298a1;margin-top:3px;font-family:'Geist Mono',monospace">248 pel·lícules · 7 visibles</div>
+      </div>
+      <div style="display:flex;gap:11px;align-items:center">
+        <div style="display:flex;align-items:center;gap:9px;background:#16181d;border:1px solid rgba(255,255,255,.1);border-radius:9px;padding:0 13px;height:42px;width:240px">
+          <span style="position:relative;width:14px;height:14px;display:inline-block;flex-shrink:0"><span style="position:absolute;width:9px;height:9px;border:1.6px solid #6b7177;border-radius:50%;top:0;left:0"></span><span style="position:absolute;width:5px;height:1.6px;background:#6b7177;transform:rotate(45deg);bottom:1px;right:-1px"></span></span>
+          <input type="text" readOnly placeholder="Cerca pel·lícula…" style="flex:1;background:transparent;border:none;outline:none;color:#eef0f2;font-size:13.5px" />
+        </div>
+        <button style="background:#2dd4bf;color:#06231f;border:none;padding:11px 18px;border-radius:9px;font-weight:600;font-size:13.5px;cursor:pointer">+ Afegeix pel·lícula</button>
+      </div>
+    </div>
+    <div style="padding:0 26px 28px">
+      <div style="border:1px solid rgba(255,255,255,.08);border-radius:12px;overflow:hidden">
+        <div style="display:grid;grid-template-columns:54px 2.4fr 0.7fr 1.3fr 1.4fr 0.8fr 1fr 1fr;gap:14px;padding:13px 18px;background:#16181d;border-bottom:1px solid rgba(255,255,255,.08);font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.08em;color:#6b7177">
+          <div></div><div>TÍTOL</div><div>ANY</div><div>DIRECCIÓ</div><div>GÈNERE</div><div>NOTA</div><div>ESTAT</div><div style="text-align:right">ACCIONS</div>
+        </div>
+        <sc-for list="{{ adminRows }}" as="row" hint-placeholder-count="7">
+          <div style="display:grid;grid-template-columns:54px 2.4fr 0.7fr 1.3fr 1.4fr 0.8fr 1fr 1fr;gap:14px;padding:11px 18px;align-items:center;border-bottom:1px solid rgba(255,255,255,.05)">
+            <div style="width:34px;height:51px;border-radius:5px;background:{{ row.color }};border:1px solid rgba(255,255,255,.08)"></div>
+            <div style="min-width:0"><div style="font-size:13.5px;font-weight:600;color:#eef0f2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ row.title }}</div><div style="font-size:11.5px;color:#6b7177;font-family:'Geist Mono',monospace">{{ row.votes }} vots</div></div>
+            <div style="font-size:13px;color:#9298a1;font-family:'Geist Mono',monospace">{{ row.year }}</div>
+            <div style="font-size:13px;color:#c8ccd2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ row.dir }}</div>
+            <div style="font-size:12.5px;color:#9298a1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ row.genre }}</div>
+            <div style="font-size:13.5px;font-weight:700;color:#2dd4bf;font-family:'Geist Mono',monospace">{{ row.rating }}</div>
+            <div><span style="{{ row.statusStyle }}">{{ row.statusLabel }}</span></div>
+            <div style="display:flex;gap:7px;justify-content:flex-end"><button style="background:#1d2026;color:#eef0f2;border:1px solid rgba(255,255,255,.12);padding:6px 13px;border-radius:7px;font-size:12.5px;font-weight:500;cursor:pointer">Edita</button></div>
+          </div>
+        </sc-for>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 5. ADMIN FORM — normal -->
+<div style="position:absolute;left:1480px;top:4156px;width:1320px">
+  <div data-drags-parent="1" style="position:absolute;top:-25px;left:2px;font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.1em;color:#7c828b">05 · ADMIN — CREAR / EDITAR</div>
+  <div data-screen-label="Admin crear/editar" style="background:#0d0e11;border:1px solid rgba(255,255,255,.08);border-radius:14px;overflow:hidden;box-shadow:0 24px 60px rgba(0,0,0,.45);font-family:Geist,system-ui,sans-serif">
+    <div style="height:62px;display:flex;align-items:center;gap:14px;padding:0 26px;border-bottom:1px solid rgba(255,255,255,.07);background:rgba(13,14,17,.96)">
+      <div style="display:flex;align-items:center;gap:9px"><div style="width:26px;height:26px;border-radius:7px;background:#2dd4bf;display:flex;align-items:center;justify-content:center;color:#06231f;font-weight:700;font-size:15px">C</div><div style="font-size:17px;font-weight:700;color:#eef0f2">Cine<span style="color:#2dd4bf">Cat</span></div></div>
+      <span style="font-family:'Geist Mono',monospace;font-size:10px;letter-spacing:.12em;color:#2dd4bf;background:rgba(45,212,191,.12);border:1px solid rgba(45,212,191,.28);padding:3px 9px;border-radius:6px">ADMIN</span>
+    </div>
+    <div style="padding:18px 28px 0"><div style="font-size:12.5px;color:#6b7177"><span style="color:#9298a1">Gestió del catàleg</span> <span style="margin:0 6px">/</span> <span style="color:#eef0f2">Edita pel·lícula</span></div></div>
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:14px 28px 22px">
+      <div style="font-size:21px;font-weight:700;color:#eef0f2">Edita: La Ciutat Submergida</div>
+      <div style="display:flex;gap:10px"><button style="background:transparent;color:#9298a1;border:1px solid rgba(255,255,255,.14);padding:9px 16px;border-radius:9px;font-weight:500;font-size:13.5px;cursor:pointer">Cancel·la</button><button style="background:#2dd4bf;color:#06231f;border:none;padding:10px 20px;border-radius:9px;font-weight:600;font-size:13.5px;cursor:pointer">Desa els canvis</button></div>
+    </div>
+    <div style="display:grid;grid-template-columns:1.5fr 1fr;gap:28px;padding:0 28px 30px">
+      <!-- camps -->
+      <div>
+        <label style="display:block;font-size:12px;color:#9298a1;font-weight:500;margin-bottom:7px">Títol</label>
+        <input type="text" readOnly value="La Ciutat Submergida" style="width:100%;height:44px;background:#16181d;border:1px solid rgba(255,255,255,.1);border-radius:9px;padding:0 13px;color:#eef0f2;font-size:14px;outline:none;margin-bottom:16px" />
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:16px">
+          <div><label style="display:block;font-size:12px;color:#9298a1;font-weight:500;margin-bottom:7px">Any</label><input type="text" readOnly value="2021" style="width:100%;height:44px;background:#16181d;border:1px solid rgba(255,255,255,.1);border-radius:9px;padding:0 13px;color:#eef0f2;font-size:14px;outline:none" /></div>
+          <div><label style="display:block;font-size:12px;color:#9298a1;font-weight:500;margin-bottom:7px">Durada (min)</label><input type="text" readOnly value="112" style="width:100%;height:44px;background:#16181d;border:1px solid rgba(255,255,255,.1);border-radius:9px;padding:0 13px;color:#eef0f2;font-size:14px;outline:none" /></div>
+        </div>
+        <label style="display:block;font-size:12px;color:#9298a1;font-weight:500;margin-bottom:7px">Direcció</label>
+        <input type="text" readOnly value="Aina Roca" style="width:100%;height:44px;background:#16181d;border:1px solid rgba(255,255,255,.1);border-radius:9px;padding:0 13px;color:#eef0f2;font-size:14px;outline:none;margin-bottom:16px" />
+        <label style="display:block;font-size:12px;color:#9298a1;font-weight:500;margin-bottom:7px">Gèneres</label>
+        <div style="display:flex;flex-wrap:wrap;gap:8px;align-items:center;background:#16181d;border:1px solid rgba(255,255,255,.1);border-radius:9px;padding:9px 11px;margin-bottom:16px">
+          <span style="display:inline-flex;align-items:center;gap:6px;padding:5px 10px;border-radius:7px;font-size:12.5px;font-weight:500;background:rgba(45,212,191,.13);color:#2dd4bf;border:1px solid rgba(45,212,191,.28)">Drama <span style="color:#2dd4bf;opacity:.7">×</span></span>
+          <span style="display:inline-flex;align-items:center;gap:6px;padding:5px 10px;border-radius:7px;font-size:12.5px;font-weight:500;background:rgba(45,212,191,.13);color:#2dd4bf;border:1px solid rgba(45,212,191,.28)">Misteri <span style="color:#2dd4bf;opacity:.7">×</span></span>
+          <span style="font-size:13px;color:#5d636c">+ Afegeix gènere</span>
+        </div>
+        <label style="display:block;font-size:12px;color:#9298a1;font-weight:500;margin-bottom:7px">Sinopsi</label>
+        <textarea readOnly style="width:100%;height:110px;resize:none;background:#16181d;border:1px solid rgba(255,255,255,.1);border-radius:9px;padding:12px 13px;color:#c8ccd2;font-size:14px;line-height:1.55;outline:none">Quan una riuada deixa un poble sencer sota l'aigua, una jove cartògrafa torna a casa per dibuixar el mapa d'allò que ja no existeix.</textarea>
+      </div>
+      <!-- pòster -->
+      <div>
+        <label style="display:block;font-size:12px;color:#9298a1;font-weight:500;margin-bottom:7px">Pòster</label>
+        <div style="position:relative;aspect-ratio:2/3;border-radius:11px;overflow:hidden;background:#2f4a3e;border:1px solid rgba(255,255,255,.1)">
+          <div style="position:absolute;inset:0;background:linear-gradient(0deg,rgba(0,0,0,.6),transparent 55%)"></div>
+          <div style="position:absolute;top:11px;left:12px;font-family:'Geist Mono',monospace;font-size:9px;letter-spacing:.14em;color:rgba(255,255,255,.6)">PREVISUALITZACIÓ</div>
+          <div style="position:absolute;left:14px;right:14px;bottom:14px;font-size:17px;font-weight:700;color:#fff">La Ciutat Submergida</div>
+          <div style="position:absolute;top:10px;right:10px;background:rgba(8,9,11,.8);border:1px solid rgba(255,255,255,.15);color:#eef0f2;font-size:11px;padding:5px 10px;border-radius:7px;cursor:pointer">Canvia</div>
+        </div>
+        <div style="margin-top:12px;border:1.5px dashed rgba(255,255,255,.16);border-radius:10px;padding:18px;text-align:center">
+          <div style="font-size:13px;color:#c8ccd2;font-weight:500">Arrossega una imatge o <span style="color:#2dd4bf">navega</span></div>
+          <div style="font-size:11.5px;color:#6b7177;margin-top:6px;font-family:'Geist Mono',monospace">JPG o PNG · proporció 2:3 · màx. 5 MB</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 5b. ADMIN FORM — error de pujada -->
+<div style="position:absolute;left:2880px;top:4156px;width:1320px">
+  <div data-drags-parent="1" style="position:absolute;top:-25px;left:2px;font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.1em;color:#7c828b">05b · ADMIN — ERROR DE PUJADA</div>
+  <div data-screen-label="Admin error pujada" style="background:#0d0e11;border:1px solid rgba(255,255,255,.08);border-radius:14px;overflow:hidden;box-shadow:0 24px 60px rgba(0,0,0,.45);font-family:Geist,system-ui,sans-serif">
+    <div style="height:62px;display:flex;align-items:center;gap:14px;padding:0 26px;border-bottom:1px solid rgba(255,255,255,.07);background:rgba(13,14,17,.96)">
+      <div style="display:flex;align-items:center;gap:9px"><div style="width:26px;height:26px;border-radius:7px;background:#2dd4bf;display:flex;align-items:center;justify-content:center;color:#06231f;font-weight:700;font-size:15px">C</div><div style="font-size:17px;font-weight:700;color:#eef0f2">Cine<span style="color:#2dd4bf">Cat</span></div></div>
+      <span style="font-family:'Geist Mono',monospace;font-size:10px;letter-spacing:.12em;color:#2dd4bf;background:rgba(45,212,191,.12);border:1px solid rgba(45,212,191,.28);padding:3px 9px;border-radius:6px">ADMIN</span>
+    </div>
+    <div style="padding:18px 28px 0"><div style="font-size:12.5px;color:#6b7177"><span style="color:#9298a1">Gestió del catàleg</span> <span style="margin:0 6px">/</span> <span style="color:#eef0f2">Nova pel·lícula</span></div></div>
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:14px 28px 22px">
+      <div style="font-size:21px;font-weight:700;color:#eef0f2">Nova pel·lícula</div>
+      <div style="display:flex;gap:10px"><button style="background:transparent;color:#9298a1;border:1px solid rgba(255,255,255,.14);padding:9px 16px;border-radius:9px;font-weight:500;font-size:13.5px;cursor:pointer">Cancel·la</button><button style="background:rgba(45,212,191,.3);color:#06231f;border:none;padding:10px 20px;border-radius:9px;font-weight:600;font-size:13.5px;cursor:not-allowed;opacity:.6">Desa els canvis</button></div>
+    </div>
+    <div style="display:grid;grid-template-columns:1.5fr 1fr;gap:28px;padding:0 28px 30px">
+      <div>
+        <label style="display:block;font-size:12px;color:#9298a1;font-weight:500;margin-bottom:7px">Títol</label>
+        <input type="text" readOnly value="Boira a Collserola" style="width:100%;height:44px;background:#16181d;border:1px solid rgba(255,255,255,.1);border-radius:9px;padding:0 13px;color:#eef0f2;font-size:14px;outline:none;margin-bottom:16px" />
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:16px">
+          <div><label style="display:block;font-size:12px;color:#9298a1;font-weight:500;margin-bottom:7px">Any</label><input type="text" readOnly value="2025" style="width:100%;height:44px;background:#16181d;border:1px solid rgba(255,255,255,.1);border-radius:9px;padding:0 13px;color:#eef0f2;font-size:14px;outline:none" /></div>
+          <div><label style="display:block;font-size:12px;color:#9298a1;font-weight:500;margin-bottom:7px">Durada (min)</label><input type="text" readOnly value="98" style="width:100%;height:44px;background:#16181d;border:1px solid rgba(255,255,255,.1);border-radius:9px;padding:0 13px;color:#eef0f2;font-size:14px;outline:none" /></div>
+        </div>
+        <label style="display:block;font-size:12px;color:#9298a1;font-weight:500;margin-bottom:7px">Direcció</label>
+        <input type="text" readOnly value="Empar Llull" style="width:100%;height:44px;background:#16181d;border:1px solid rgba(255,255,255,.1);border-radius:9px;padding:0 13px;color:#eef0f2;font-size:14px;outline:none;margin-bottom:16px" />
+        <label style="display:block;font-size:12px;color:#9298a1;font-weight:500;margin-bottom:7px">Sinopsi</label>
+        <textarea readOnly placeholder="Escriu una sinopsi breu…" style="width:100%;height:110px;resize:none;background:#16181d;border:1px solid rgba(255,255,255,.1);border-radius:9px;padding:12px 13px;color:#c8ccd2;font-size:14px;outline:none"></textarea>
+      </div>
+      <div>
+        <label style="display:block;font-size:12px;color:#9298a1;font-weight:500;margin-bottom:7px">Pòster</label>
+        <!-- zona error -->
+        <div style="border:1.5px dashed rgba(255,82,82,.5);background:rgba(255,82,82,.06);border-radius:11px;padding:26px 18px;text-align:center">
+          <div style="width:48px;height:48px;border-radius:12px;background:rgba(255,82,82,.14);display:flex;align-items:center;justify-content:center;margin:0 auto 14px"><span style="font-size:24px;font-weight:700;color:#ff6b6b">!</span></div>
+          <div style="font-size:14px;color:#eef0f2;font-weight:600;margin-bottom:6px">No s'ha pogut pujar la imatge</div>
+          <div style="font-size:12.5px;color:#ff8a8a;line-height:1.45;max-width:240px;margin:0 auto">El fitxer és un GIF de 8,2 MB. Fes servir <span style="font-weight:600">JPG o PNG</span> de fins a <span style="font-weight:600">5 MB</span>.</div>
+        </div>
+        <!-- chip fitxer rebutjat -->
+        <div style="display:flex;align-items:center;gap:11px;margin-top:12px;background:#16181d;border:1px solid rgba(255,82,82,.35);border-radius:9px;padding:11px 13px">
+          <div style="width:34px;height:34px;border-radius:7px;background:rgba(255,82,82,.14);display:flex;align-items:center;justify-content:center;font-family:'Geist Mono',monospace;font-size:9px;color:#ff8a8a;font-weight:600">GIF</div>
+          <div style="flex:1;min-width:0"><div style="font-size:13px;color:#eef0f2;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">zombis-montseny.gif</div><div style="font-size:11.5px;color:#ff8a8a;font-family:'Geist Mono',monospace">8,2 MB · format no admès</div></div>
+          <span style="color:#6b7177;cursor:pointer;font-size:16px">×</span>
+        </div>
+        <div style="margin-top:12px;border:1.5px dashed rgba(255,255,255,.16);border-radius:10px;padding:16px;text-align:center">
+          <div style="font-size:13px;color:#c8ccd2;font-weight:500">Torna-ho a provar — <span style="color:#2dd4bf">navega</span></div>
+          <div style="font-size:11.5px;color:#6b7177;margin-top:6px;font-family:'Geist Mono',monospace">JPG o PNG · proporció 2:3 · màx. 5 MB</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ SECCIÓ: MÒBIL ============ -->
+<div data-drags-parent="1" style="position:absolute;left:80px;top:5470px;font-family:'Geist Mono',monospace;font-size:13px;letter-spacing:.2em;color:#8a9098;font-weight:500">MÒBIL · CONSUM (iOS / Android)</div>
+
+<!-- 6. MÒBIL CATÀLEG -->
+<div style="position:absolute;left:80px;top:5526px;width:402px">
+  <div data-drags-parent="1" style="position:absolute;top:-25px;left:2px;font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.1em;color:#7c828b">06 · CATÀLEG MÒBIL</div>
+  <div data-screen-label="Catàleg mòbil" style="background:#000;border-radius:46px;padding:11px;box-shadow:0 30px 70px rgba(0,0,0,.55);font-family:Geist,system-ui,sans-serif">
+    <div style="position:relative;width:380px;height:812px;border-radius:36px;overflow:hidden;background:#0d0e11">
+      <!-- status bar -->
+      <div style="position:absolute;top:0;left:0;right:0;height:48px;display:flex;align-items:center;justify-content:space-between;padding:0 26px;z-index:5"><span style="font-size:14px;font-weight:600;color:#eef0f2;font-family:'Geist Mono',monospace">9:41</span><div style="display:flex;align-items:center;gap:6px"><span style="font-size:11px;color:#eef0f2;font-family:'Geist Mono',monospace">5G</span><div style="width:22px;height:11px;border:1.4px solid #eef0f2;border-radius:3px;position:relative"><div style="position:absolute;inset:1.5px;width:70%;background:#eef0f2;border-radius:1px"></div></div></div></div>
+      <div style="position:absolute;top:13px;left:50%;transform:translateX(-50%);width:108px;height:26px;background:#000;border-radius:14px;z-index:6"></div>
+      <!-- header -->
+      <div style="position:absolute;top:48px;left:0;right:0;padding:8px 18px 12px;display:flex;align-items:center;justify-content:space-between"><div style="display:flex;align-items:center;gap:8px"><div style="width:24px;height:24px;border-radius:6px;background:#2dd4bf;display:flex;align-items:center;justify-content:center;color:#06231f;font-weight:700;font-size:14px">C</div><div style="font-size:16px;font-weight:700;color:#eef0f2">Cine<span style="color:#2dd4bf">Cat</span></div></div></div>
+      <!-- scroll content -->
+      <div style="position:absolute;top:96px;bottom:64px;left:0;right:0;overflow:hidden;padding:6px 18px 0">
+        <div style="display:flex;align-items:center;gap:10px;background:#16181d;border:1px solid rgba(255,255,255,.1);border-radius:11px;padding:0 13px;height:42px;margin-bottom:14px">
+          <span style="position:relative;width:14px;height:14px;display:inline-block;flex-shrink:0"><span style="position:absolute;width:9px;height:9px;border:1.6px solid #6b7177;border-radius:50%;top:0;left:0"></span><span style="position:absolute;width:5px;height:1.6px;background:#6b7177;transform:rotate(45deg);bottom:1px;right:-1px"></span></span>
+          <span style="flex:1;color:#5d636c;font-size:13.5px">Cerca per títol…</span>
+        </div>
+        <div style="display:flex;gap:8px;margin-bottom:16px;overflow:hidden">
+          <span style="display:inline-flex;padding:6px 12px;border-radius:999px;font-size:12px;font-weight:600;background:rgba(45,212,191,.15);color:#2dd4bf;border:1px solid rgba(45,212,191,.3);white-space:nowrap">Tots</span>
+          <span style="display:inline-flex;padding:6px 12px;border-radius:999px;font-size:12px;font-weight:500;background:#1d2026;color:#9298a1;white-space:nowrap">Drama</span>
+          <span style="display:inline-flex;padding:6px 12px;border-radius:999px;font-size:12px;font-weight:500;background:#1d2026;color:#9298a1;white-space:nowrap">Ciència-ficció</span>
+          <span style="display:inline-flex;padding:6px 12px;border-radius:999px;font-size:12px;font-weight:500;background:#1d2026;color:#9298a1;white-space:nowrap">Terror</span>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px">
+          <sc-for list="{{ mobileMovies }}" as="m" hint-placeholder-count="6">
+            <dc-import name="MovieCard" movie="{{ m }}" hint-size="100%,260px"></dc-import>
+          </sc-for>
+        </div>
+      </div>
+      <!-- tab bar -->
+      <div style="position:absolute;bottom:0;left:0;right:0;height:64px;background:rgba(13,14,17,.97);border-top:1px solid rgba(255,255,255,.08);display:flex;align-items:flex-start;justify-content:space-around;padding-top:11px">
+        <div style="display:flex;flex-direction:column;align-items:center;gap:4px"><div style="width:18px;height:18px;border-radius:4px;border:2px solid #2dd4bf"></div><span style="font-size:10px;color:#2dd4bf;font-weight:600">Catàleg</span></div>
+        <div style="display:flex;flex-direction:column;align-items:center;gap:4px"><div style="position:relative;width:16px;height:16px"><span style="position:absolute;width:11px;height:11px;border:2px solid #6b7177;border-radius:50%;top:0;left:0"></span><span style="position:absolute;width:6px;height:2px;background:#6b7177;transform:rotate(45deg);bottom:1px;right:-1px"></span></div><span style="font-size:10px;color:#6b7177">Cerca</span></div>
+        <div style="display:flex;flex-direction:column;align-items:center;gap:4px"><div style="width:16px;height:16px;border-radius:50%;border:2px solid #6b7177"></div><span style="font-size:10px;color:#6b7177">Perfil</span></div>
+      </div>
+      <div style="position:absolute;bottom:7px;left:50%;transform:translateX(-50%);width:128px;height:5px;border-radius:3px;background:rgba(255,255,255,.3)"></div>
+    </div>
+  </div>
+</div>
+
+<!-- 7. MÒBIL FITXA -->
+<div style="position:absolute;left:562px;top:5526px;width:402px">
+  <div data-drags-parent="1" style="position:absolute;top:-25px;left:2px;font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.1em;color:#7c828b">07 · FITXA MÒBIL</div>
+  <div data-screen-label="Fitxa mòbil" style="background:#000;border-radius:46px;padding:11px;box-shadow:0 30px 70px rgba(0,0,0,.55);font-family:Geist,system-ui,sans-serif">
+    <div style="position:relative;width:380px;height:812px;border-radius:36px;overflow:hidden;background:#0d0e11">
+      <div style="position:absolute;top:0;left:0;right:0;height:48px;display:flex;align-items:center;justify-content:space-between;padding:0 26px;z-index:5"><span style="font-size:14px;font-weight:600;color:#fff;font-family:'Geist Mono',monospace">9:41</span><div style="display:flex;align-items:center;gap:6px"><span style="font-size:11px;color:#fff;font-family:'Geist Mono',monospace">5G</span><div style="width:22px;height:11px;border:1.4px solid #fff;border-radius:3px;position:relative"><div style="position:absolute;inset:1.5px;width:70%;background:#fff;border-radius:1px"></div></div></div></div>
+      <div style="position:absolute;top:13px;left:50%;transform:translateX(-50%);width:108px;height:26px;background:#000;border-radius:14px;z-index:6"></div>
+      <div style="position:absolute;top:0;bottom:74px;left:0;right:0;overflow:hidden">
+        <!-- hero pòster -->
+        <div style="position:relative;height:300px;background:#2f4a3e">
+          <div style="position:absolute;inset:0;background:linear-gradient(0deg,#0d0e11 2%,rgba(13,14,17,.3) 40%,transparent 70%),linear-gradient(155deg,rgba(255,255,255,.1),transparent 40%)"></div>
+          <div style="position:absolute;top:52px;left:18px;width:34px;height:34px;border-radius:50%;background:rgba(8,9,11,.6);display:flex;align-items:center;justify-content:center;color:#fff;font-size:18px">‹</div>
+          <div style="position:absolute;top:14px;right:18px;font-family:'Geist Mono',monospace;font-size:9px;letter-spacing:.14em;color:rgba(255,255,255,.5);margin-top:42px">CARTELL</div>
+          <div style="position:absolute;left:18px;right:18px;bottom:16px">
+            <div style="display:flex;gap:7px;margin-bottom:9px"><span style="display:inline-flex;padding:4px 10px;border-radius:999px;font-size:11px;font-weight:500;background:rgba(13,14,17,.7);color:#c8ccd2;border:1px solid rgba(255,255,255,.12)">Drama</span><span style="display:inline-flex;padding:4px 10px;border-radius:999px;font-size:11px;font-weight:500;background:rgba(13,14,17,.7);color:#c8ccd2;border:1px solid rgba(255,255,255,.12)">Misteri</span></div>
+            <div style="font-size:24px;font-weight:700;color:#fff;line-height:1.1">La Ciutat Submergida</div>
+            <div style="font-family:'Geist Mono',monospace;font-size:12px;color:#c8ccd2;margin-top:6px">2021 · 1h 52min · Dir. Aina Roca</div>
+          </div>
+        </div>
+        <!-- body -->
+        <div style="padding:16px 18px 0">
+          <div style="display:flex;align-items:center;gap:13px;margin-bottom:18px">
+            <div style="width:62px;height:62px;border-radius:50%;border:3px solid #2dd4bf;display:flex;align-items:center;justify-content:center;background:rgba(45,212,191,.08);flex-shrink:0"><span style="font-size:21px;font-weight:700;color:#2dd4bf;font-family:'Geist Mono',monospace">7,8</span></div>
+            <div><div style="font-size:13px;color:#eef0f2;font-weight:600">Nota mitjana</div><div style="font-size:12px;color:#9298a1;font-family:'Geist Mono',monospace;margin-top:2px">1.243 valoracions</div></div>
+          </div>
+          <p style="font-size:13.5px;line-height:1.6;color:#c8ccd2;margin:0 0 20px">Quan una riuada deixa un poble sota l'aigua, una jove cartògrafa torna a casa per dibuixar el mapa d'allò que ja no existeix. Entre records submergits i secrets que suren, descobreix que la ciutat amaga molt més…</p>
+          <div style="font-size:15px;font-weight:700;color:#eef0f2;margin-bottom:12px">Valoracions <span style="color:#6b7177;font-weight:500;font-size:13px;font-family:'Geist Mono',monospace">· 1.243</span></div>
+          <div style="display:flex;gap:11px;padding:12px 0;border-top:1px solid rgba(255,255,255,.06)">
+            <div style="width:34px;height:34px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-weight:600;font-size:13px;color:#fff;background:#3b3a6b">C</div>
+            <div style="flex:1;min-width:0"><div style="display:flex;align-items:center;gap:8px;margin-bottom:4px"><span style="font-size:13px;font-weight:600;color:#eef0f2">@cinefila_92</span><span style="background:rgba(45,212,191,.12);border:1px solid rgba(45,212,191,.28);padding:1px 7px;border-radius:999px;font-size:11px;font-weight:700;color:#2dd4bf;font-family:'Geist Mono',monospace">9</span></div><p style="margin:0;font-size:12.5px;line-height:1.5;color:#c8ccd2">Una atmosfera que t'empassa. La fotografia submarina és hipnòtica.</p></div>
+          </div>
+          <div style="display:flex;gap:11px;padding:12px 0;border-top:1px solid rgba(255,255,255,.06)">
+            <div style="width:34px;height:34px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-weight:600;font-size:13px;color:#7c828b;background:#1d2026">A</div>
+            <div style="flex:1;min-width:0"><div style="display:flex;align-items:center;gap:8px;margin-bottom:4px"><span style="font-size:13px;font-weight:600;color:#9298a1">Anònim</span><span style="background:rgba(45,212,191,.12);border:1px solid rgba(45,212,191,.28);padding:1px 7px;border-radius:999px;font-size:11px;font-weight:700;color:#2dd4bf;font-family:'Geist Mono',monospace">7</span></div><p style="margin:0;font-size:12.5px;line-height:1.5;color:#c8ccd2">Bona, però se'm va fer una mica llarga pel mig.</p></div>
+          </div>
+        </div>
+      </div>
+      <!-- sticky CTA -->
+      <div style="position:absolute;bottom:0;left:0;right:0;height:74px;background:rgba(13,14,17,.97);border-top:1px solid rgba(255,255,255,.08);display:flex;align-items:center;padding:0 18px"><button style="width:100%;background:#2dd4bf;color:#06231f;border:none;height:46px;border-radius:11px;font-weight:600;font-size:15px;cursor:pointer">Valora aquesta pel·lícula</button></div>
+      <div style="position:absolute;bottom:7px;left:50%;transform:translateX(-50%);width:128px;height:5px;border-radius:3px;background:rgba(255,255,255,.3)"></div>
+    </div>
+  </div>
+</div>
+
+<!-- 8. MÒBIL VALORAR -->
+<div style="position:absolute;left:1044px;top:5526px;width:402px">
+  <div data-drags-parent="1" style="position:absolute;top:-25px;left:2px;font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.1em;color:#7c828b">08 · VALORAR (MÒBIL)</div>
+  <div data-screen-label="Valorar mòbil" style="background:#000;border-radius:46px;padding:11px;box-shadow:0 30px 70px rgba(0,0,0,.55);font-family:Geist,system-ui,sans-serif">
+    <div style="position:relative;width:380px;height:812px;border-radius:36px;overflow:hidden;background:#0d0e11">
+      <!-- fons enfosquit (fitxa darrere) -->
+      <div style="position:absolute;inset:0;background:#16181d"></div>
+      <div style="position:absolute;top:0;left:0;right:0;height:300px;background:#2f4a3e;opacity:.4"></div>
+      <div style="position:absolute;inset:0;background:rgba(0,0,0,.55)"></div>
+      <div style="position:absolute;top:0;left:0;right:0;height:48px;display:flex;align-items:center;justify-content:space-between;padding:0 26px;z-index:5"><span style="font-size:14px;font-weight:600;color:#fff;font-family:'Geist Mono',monospace">9:41</span><div style="display:flex;align-items:center;gap:6px"><span style="font-size:11px;color:#fff;font-family:'Geist Mono',monospace">5G</span><div style="width:22px;height:11px;border:1.4px solid #fff;border-radius:3px;position:relative"><div style="position:absolute;inset:1.5px;width:70%;background:#fff;border-radius:1px"></div></div></div></div>
+      <div style="position:absolute;top:13px;left:50%;transform:translateX(-50%);width:108px;height:26px;background:#000;border-radius:14px;z-index:6"></div>
+      <!-- sheet -->
+      <div style="position:absolute;left:0;right:0;bottom:0;background:#0d0e11;border-radius:24px 24px 0 0;border-top:1px solid rgba(255,255,255,.1);padding:12px 20px 22px;box-shadow:0 -20px 50px rgba(0,0,0,.5)">
+        <div style="width:38px;height:4px;border-radius:3px;background:rgba(255,255,255,.22);margin:0 auto 18px"></div>
+        <div style="display:flex;align-items:center;gap:13px;margin-bottom:22px">
+          <div style="width:46px;height:68px;border-radius:7px;background:#2f4a3e;flex-shrink:0;position:relative;overflow:hidden"><div style="position:absolute;inset:0;background:linear-gradient(0deg,rgba(0,0,0,.5),transparent 60%)"></div></div>
+          <div><div style="font-size:11px;color:#6b7177;font-family:'Geist Mono',monospace;margin-bottom:3px">VALORES</div><div style="font-size:16px;font-weight:700;color:#eef0f2;line-height:1.15">La Ciutat Submergida</div><div style="font-size:12px;color:#9298a1;font-family:'Geist Mono',monospace">2021</div></div>
+        </div>
+        <div style="font-size:13px;font-weight:600;color:#eef0f2;margin-bottom:13px">La teva nota</div>
+        <div style="margin-bottom:20px"><dc-import name="RatingSelector" hint-size="100%,90px"></dc-import></div>
+        <textarea readOnly placeholder="Escriu la teva ressenya (opcional)…" style="width:100%;height:88px;resize:none;background:#16181d;border:1px solid rgba(255,255,255,.1);border-radius:11px;padding:13px 14px;color:#eef0f2;font-size:13.5px;line-height:1.5;outline:none;margin-bottom:16px"></textarea>
+        <div style="font-size:12px;color:#9298a1;font-weight:500;margin-bottom:9px">Publica com a</div>
+        <div style="display:flex;background:#16181d;border:1px solid rgba(255,255,255,.1);border-radius:11px;padding:4px;margin-bottom:18px">
+          <button onClick="{{ setAnonMob }}" style="{{ tabAnonMobStyle }}">Anònim</button>
+          <button onClick="{{ setRegMob }}" style="{{ tabRegMobStyle }}">@joancinema</button>
+        </div>
+        <button style="width:100%;background:#2dd4bf;color:#06231f;border:none;height:50px;border-radius:13px;font-weight:600;font-size:15.5px;cursor:pointer">Envia la valoració</button>
+        <div style="text-align:center;font-size:11.5px;color:#6b7177;margin-top:11px">Pots valorar sense iniciar sessió</div>
+      </div>
+      <div style="position:absolute;bottom:7px;left:50%;transform:translateX(-50%);width:128px;height:5px;border-radius:3px;background:rgba(255,255,255,.4);z-index:8"></div>
+    </div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  state = { modeWeb:'anon', modeMob:'registrat' };
+  renderVals(){
+    const P={pine:'#2f4a3e',navy:'#2c3a5e',plum:'#5a3550',maroon:'#5b2f3a',slate:'#36404d',rust:'#6b3a2e',indigo:'#3b3a6b',moss:'#475036',none:'#1a1d22',ochre:'#6b5a2e'};
+    const mk=(title,year,rating,posterColor,hasPoster)=>({title,year:String(year),rating,posterColor,hasPoster:!!hasPoster,noPoster:!hasPoster});
+    const movies=[
+      mk("La Ciutat Submergida",2021,"7,8",P.pine,true),
+      mk("Òrbita Baixa",2023,"8,4",P.navy,true),
+      mk("El Jardí de Cendra",2019,"7,1",P.plum,true),
+      mk("Nits de Neó",2022,"6,9",P.maroon,true),
+      mk("La Frontera Invisible",2020,"8,1",P.slate,true),
+      mk("Cor de Tramuntana",2024,"7,5",P.rust,true),
+      mk("Silenci a l'Alba",2018,"6,4",P.indigo,true),
+      mk("Mapes del No-Res",2023,"7,9",P.moss,true),
+      mk("L'Última Sessió",2022,"6,2",P.none,false),
+      mk("Vidres Trencats",2021,"8,0",P.ochre,true)
+    ];
+    const mobileMovies=[movies[1],movies[0],movies[4],movies[3],movies[7],movies[8]];
+
+    const reviews=[
+      {name:"@cinefila_92",initial:"C",color:"#3b3a6b",nameColor:"#eef0f2",rating:"9",date:"fa 2 dies",text:"Una atmosfera que t'empassa. La fotografia submarina és hipnòtica i el ritme et deixa pensant durant dies."},
+      {name:"Anònim",initial:"A",color:"#1d2026",nameColor:"#9298a1",rating:"7",date:"fa 5 dies",text:"Bona, però se'm va fer una mica llarga pel mig. Tot i així, el tram final ho compensa de sobres."},
+      {name:"@martapunt",initial:"M",color:"#2f4a3e",nameColor:"#eef0f2",rating:"8",date:"fa 1 setmana",text:"El disseny de so amb auriculars és brutal i la banda sonora se't queda al cap. Molt recomanable."},
+      {name:"@dvdcollector",initial:"D",color:"#6b3a2e",nameColor:"#eef0f2",rating:"6",date:"fa 2 setmanes",text:"Visualment impecable, però el guió em va semblar fluixet. Esperava més del gir final."},
+      {name:"Anònim",initial:"A",color:"#1d2026",nameColor:"#9298a1",rating:"10",date:"fa 3 setmanes",text:"La millor que he vist en tot l'any. Vaig sortir del cinema sense paraules."}
+    ];
+
+    const statusPub='display:inline-flex;align-items:center;gap:6px;padding:4px 10px;border-radius:999px;font-size:11.5px;font-weight:500;background:rgba(45,212,191,.12);color:#2dd4bf;border:1px solid rgba(45,212,191,.25)';
+    const statusDraft='display:inline-flex;align-items:center;gap:6px;padding:4px 10px;border-radius:999px;font-size:11.5px;font-weight:500;background:#1d2026;color:#9298a1;border:1px solid rgba(255,255,255,.1)';
+    const adminRaw=[
+      ["La Ciutat Submergida","2021","Aina Roca","Drama · Misteri","7,8","1.243",P.pine,true],
+      ["Òrbita Baixa","2023","Marc Vidal","Ciència-ficció","8,4","2.871",P.navy,true],
+      ["Cor de Tramuntana","2024","Jordi Ferran","Romanç · Drama","7,5","421",P.rust,true],
+      ["Nits de Neó","2022","Pau Serra","Thriller","6,9","988",P.maroon,true],
+      ["L'Última Sessió","2022","Clara Mas","Terror","6,2","308",P.none,false],
+      ["Mapes del No-Res","2023","Oriol Pi","Aventura · Drama","7,9","1.102",P.moss,true],
+      ["Vidres Trencats","2021","Sergi Aloy","Drama · Crim","8,0","1.330",P.ochre,true]
+    ];
+    const adminRows=adminRaw.map(r=>({
+      title:r[0],year:r[1],dir:r[2],genre:r[3],rating:r[4],votes:r[5],color:r[6],
+      statusLabel:r[7]?'Publicada':'Esborrany',
+      statusStyle:r[7]?statusPub:statusDraft
+    }));
+
+    const tabOn='flex:1;padding:8px 14px;border:none;border-radius:7px;cursor:pointer;font-family:Geist,sans-serif;font-size:12.5px;font-weight:600;background:rgba(45,212,191,.15);color:#2dd4bf;white-space:nowrap;transition:all .12s';
+    const tabOff='flex:1;padding:8px 14px;border:none;border-radius:7px;cursor:pointer;font-family:Geist,sans-serif;font-size:12.5px;font-weight:500;background:transparent;color:#7c828b;white-space:nowrap;transition:all .12s';
+    const mTabOn='flex:1;padding:11px;border:none;border-radius:9px;cursor:pointer;font-family:Geist,sans-serif;font-size:13.5px;font-weight:600;background:rgba(45,212,191,.16);color:#2dd4bf;transition:all .12s';
+    const mTabOff='flex:1;padding:11px;border:none;border-radius:9px;cursor:pointer;font-family:Geist,sans-serif;font-size:13.5px;font-weight:500;background:transparent;color:#7c828b;transition:all .12s';
+
+    return {
+      movies, mobileMovies, reviews, adminRows,
+      skeletons:[0,1,2,3,4,5,6,7,8,9],
+      eight:8,
+      cardDemo:mk("Òrbita Baixa",2023,"8,4",P.navy,true),
+      tabAnonWebStyle:this.state.modeWeb==='anon'?tabOn:tabOff,
+      tabRegWebStyle:this.state.modeWeb==='reg'?tabOn:tabOff,
+      setAnonWeb:()=>this.setState({modeWeb:'anon'}),
+      setRegWeb:()=>this.setState({modeWeb:'reg'}),
+      tabAnonMobStyle:this.state.modeMob==='anon'?mTabOn:mTabOff,
+      tabRegMobStyle:this.state.modeMob==='registrat'?mTabOn:mTabOff,
+      setAnonMob:()=>this.setState({modeMob:'anon'}),
+      setRegMob:()=>this.setState({modeMob:'registrat'})
+    };
+  }
+}
+</script>
+</body>
+</html>

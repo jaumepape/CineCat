@@ -20,6 +20,7 @@ Projecte d'aprenentatge full-stack. **Prioritza claredat sobre completesa.**
 |---|---|
 | [ESPECIFICACIO.md](ESPECIFICACIO.md) | Concepte, requisits, model de dades, API REST, arquitectura, stack, estructura de carpetes, pantalles i desplegament. **La font de veritat del disseny.** |
 | [PLA-IMPLEMENTACIO.md](PLA-IMPLEMENTACIO.md) | Pla per fases (0→6) amb objectius, tasques concretes, checkpoints d'aprenentatge i criteris de verificació. **El que has de seguir per construir.** |
+| [design/](design/) | **Handoff de disseny d'alta fidelitat** (Claude Design): pantalles 00–08, components `MovieCard` i `RatingSelector`, i design tokens. **Contracte visual.** Obre `design/CineCat.dc.html` al navegador. |
 
 ## Tres idees que has de recordar sempre
 

@@ -1,6 +1,6 @@
 # CineCat — Pla d'Implementació per Fases
 
-> Guia accionable per construir el projecte. Llegeix abans [ESPECIFICACIO.md](ESPECIFICACIO.md).
+> Guia accionable per construir el projecte. Llegeix abans [ESPECIFICACIO.md](ESPECIFICACIO.md). El disseny d'alta fidelitat (contracte visual) és a [docs/design/](design/); a les fases de frontend (3, 4, 5) recrea aquells dissenys fidelment, incloent-hi les variants d'estat (sense resultats, càrrega, sense valoracions, error de pujada).
 >
 > **Regla d'or:** cada fase ha de deixar **alguna cosa funcionant i verificable**. No passis a la fase següent fins que el "Com ho verifiques" estigui en verd i entenguis el "Checkpoint d'aprenentatge".
 
@@ -73,7 +73,7 @@ Fase 0 ──► Fase 1 ──► Fase 2 ──► Fase 3 ──► Fase 4 ─�
 **Tasques**
 - [ ] Configurar `UPLOAD_DIR` (en dev: `backend/uploads`). Crear la subcarpeta `posters/`.
 - [ ] Implementar `POST /api/movies/{id}/poster` que rep `multipart/form-data` (camp `file`):
-  - [ ] Validar **mida** (≤ `MAX_UPLOAD_MB`, p. ex. 2 MB) → `413` si excedeix.
+  - [ ] Validar **mida** (≤ `MAX_UPLOAD_MB` = 5 MB) → `413` si excedeix.
   - [ ] Validar **tipus real** pels magic bytes (només JPG/PNG) → `415` si no.
   - [ ] Redimensionar a una amplada màxima (~500px).
   - [ ] Generar un nom segur (p. ex. `{id}.jpg`) i desar al volum.

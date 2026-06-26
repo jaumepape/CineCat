@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet">
+</helmet>
+<div style="font-family:Geist,system-ui,sans-serif;width:100%">
+  <div style="display:flex;align-items:baseline;gap:9px;margin-bottom:11px">
+    <span style="font-size:38px;font-weight:700;line-height:1;color:#2dd4bf;font-family:'Geist Mono',monospace;letter-spacing:-.02em">{{ display }}</span>
+    <span style="font-size:15px;color:#5d636c;font-weight:500">/ 10</span>
+    <span style="font-size:13px;color:#9298a1;margin-left:auto;font-weight:500">{{ label }}</span>
+  </div>
+  <div style="display:flex;gap:5px">
+    <sc-for list="{{ segments }}" as="seg" hint-placeholder-count="10">
+      <button type="button" onClick="{{ seg.onClick }}" onMouseEnter="{{ seg.onHover }}" onMouseLeave="{{ clearHover }}" style="{{ seg.style }}">{{ seg.n }}</button>
+    </sc-for>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:420,&quot;height&quot;:110},&quot;default&quot;:{&quot;editor&quot;:&quot;int&quot;,&quot;default&quot;:8,&quot;min&quot;:1,&quot;max&quot;:10,&quot;tsType&quot;:&quot;number&quot;}}">
+class Component extends DCLogic {
+  state = { selected: null, hover: null };
+  componentDidMount(){ if(this.props.default!=null) this.setState({selected:Number(this.props.default)}); }
+  renderVals(){
+    const sel=this.state.selected, hov=this.state.hover;
+    const active = hov!=null ? hov : (sel!=null ? sel : 0);
+    const labels=['','Horrible','Molt dolenta','Dolenta','Fluixa','Regular','Acceptable','Bona','Molt bona','Excel·lent','Obra mestra'];
+    const segs=[];
+    for(let i=1;i<=10;i++){
+      const on = i<=active;
+      segs.push({
+        n:i,
+        style:`flex:1;min-width:0;height:38px;border:none;border-radius:8px;cursor:pointer;font-family:'Geist Mono',monospace;font-size:13px;font-weight:500;transition:background .12s,color .12s,transform .12s;background:${on?'#2dd4bf':'#1d2026'};color:${on?'#06231f':'#7c828b'};transform:${(hov===i)?'translateY(-2px)':'none'}`,
+        onClick:()=>this.setState({selected:i}),
+        onHover:()=>this.setState({hover:i})
+      });
+    }
+    return { display: active||0, label: active? labels[active] : 'Tria una nota', segments:segs, clearHover:()=>this.setState({hover:null}) };
+  }
+}
+</script>
+</body>
+</html>
