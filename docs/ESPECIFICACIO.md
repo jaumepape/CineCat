@@ -63,6 +63,7 @@
 |---|---|---|
 | `id` | UUID / serial (PK) | |
 | `email` | text, únic | Login. |
+| `alias` | text | **Àlies públic** ("@joancinema"); és el que es mostra a les ressenyes registrades, no l'email. |
 | `password_hash` | text | Mai en clar (bcrypt). |
 | `role` | text enum: `'admin'` \| `'user'` | **Aquí viu el rol d'admin**: un camp, no una entitat. |
 | `created_at` | timestamp | |
@@ -75,8 +76,10 @@
 | `title` | text | |
 | `year` | integer | |
 | `duration_min` | integer | Durada en minuts. |
+| `director` | text | Direcció; es mostra a fitxa, taula admin i formulari. |
 | `synopsis` | text | |
-| `genre` | text | **Gènere com a camp** (veure trade-off). |
+| `genres` | text[] (array) | **Gèneres en plural** (veure trade-off). Filtre: `WHERE 'Drama' = ANY(genres)`. |
+| `status` | text enum: `'published'` \| `'draft'` | Estat editorial ("Publicada/Esborrany") de la taula admin. Per defecte `'draft'`. |
 | `poster_path` | text, nullable | **Aquí viu el pòster**: la RUTA del fitxer, no els bytes. Nullable: es pot crear sense pòster. |
 | `created_at` | timestamp | |
 
@@ -109,6 +112,7 @@
         ├─────────────────┤
         │ id        (PK)  │
         │ email           │
+        │ alias           │  àlies públic
         │ password_hash   │
         │ role            │  'admin' | 'user'
         │ created_at      │
@@ -124,22 +128,26 @@
         │ score (1-10)    │                       │ title           │
         │ comment    ?    │                       │ year            │
         │ author_label ?  │                       │ duration_min    │
-        │ created_at      │                       │ synopsis        │
-        └─────────────────┘                       │ genre           │
+        │ created_at      │                       │ director        │
+        └─────────────────┘                       │ synopsis        │
+                                                  │ genres   text[] │
+          ?  = nullable                           │ status          │ 'published'|'draft'
                                                   │ poster_path  ?  │ ← ruta, no bytes
-          ?  = nullable                           │ created_at      │
+                                                  │ created_at      │
                                                   └─────────────────┘
 ```
 
-### "Gènere": entitat o camp?
+### "Gènere": com es modela (decisió presa)
+
+El disseny mostra **múltiples gèneres** per pel·lícula (xips + "Afegeix gènere"), així que un sol camp de text no servia. Opcions valorades:
 
 | Opció | Avantatge | Inconvenient | Veredicte |
 |---|---|---|---|
-| **Camp de text** (`genre`) | Zero taules extra; fàcil de mostrar/filtrar. | Un sol gènere; possibles typos. | ✅ Recomanat MVP |
-| Camp + llista tancada validada | Evita typos. | Una mica més de lògica. | ✅ Compromís |
-| Entitat `genres` + N:M | Multi-gènere "correcte". | Joins, més endpoints, no ensenya domini nou. | ❌ Sobredimensiona |
+| Un sol camp de text | Mínim. | Contradiu el disseny (multi-gènere). | ❌ |
+| **Columna array `genres text[]`** | Multi-gènere; **manté 3 entitats**; filtre senzill amb `ANY`. | Menys "normalitzat" que una taula. | ✅ **Triada** |
+| Entitat `genres` + N:M | Multi-gènere "normalitzat". | Joins, més endpoints, 4a entitat; no ensenya domini nou. | ❌ Sobredimensiona |
 
-**Recomanació:** camp de text validat contra una llista fixa al backend.
+**Decisió:** `movies.genres text[]`, validats contra una llista fixa al backend. Es manté el límit de 3 entitats i es respecta el contracte de disseny. Filtre de catàleg: `WHERE $1 = ANY(genres)`.
 
 **Per què no calen més entitats:** tot el domini (qui ets, què mires, què opines) cap en aquestes tres. Una entitat es justifica quan té vida pròpia i relacions; si és un atribut, és un camp.
 
@@ -176,18 +184,21 @@ Un sol contracte per a web i mòbil. Base: `/api`.
 ```json
 // petició
 { "title": "El viatge", "year": 2021, "duration_min": 118,
-  "synopsis": "Un grup d'amics...", "genre": "Drama" }
+  "director": "Aina Roca", "synopsis": "Un grup d'amics...",
+  "genres": ["Drama", "Aventura"], "status": "draft" }
 
 // resposta 201
 { "id": "a1b2", "title": "El viatge", "year": 2021, "duration_min": 118,
-  "synopsis": "Un grup d'amics...", "genre": "Drama",
+  "director": "Aina Roca", "synopsis": "Un grup d'amics...",
+  "genres": ["Drama", "Aventura"], "status": "draft",
   "poster_url": null, "created_at": "2026-06-26T10:00:00Z" }
 ```
 
 **Fitxa amb mitjana** — `GET /api/movies/a1b2`
 ```json
 { "id": "a1b2", "title": "El viatge", "year": 2021, "duration_min": 118,
-  "synopsis": "Un grup d'amics...", "genre": "Drama",
+  "director": "Aina Roca", "synopsis": "Un grup d'amics...",
+  "genres": ["Drama", "Aventura"], "status": "published",
   "poster_url": "/uploads/posters/a1b2.jpg",
   "avg_score": 7.4, "rating_count": 12 }
 ```
@@ -197,11 +208,13 @@ Un sol contracte per a web i mòbil. Base: `/api`.
 // petició
 { "score": 8, "comment": "M'ha agradat molt", "author_label": "Joan" }
 
-// resposta 201
+// resposta 201 (user_id null → anònim; author_label és el nom cosmètic)
 { "id": "r99", "movie_id": "a1b2", "user_id": null,
   "score": 8, "comment": "M'ha agradat molt", "author_label": "Joan",
   "created_at": "2026-06-26T10:05:00Z" }
 ```
+
+> Valoració **registrada**: si arriba `Authorization: Bearer <token>`, `user_id` s'omple i la resposta mostra l'`alias` de l'usuari (p. ex. `"@joancinema"`), no l'email.
 
 ### Pujada d'imatge (conceptual)
 
@@ -217,11 +230,11 @@ El navegador envia `POST` amb `Content-Type: multipart/form-data` i un part `fil
 | Sense token / token invàlid | `401` | `{error: "no autenticat"}` |
 | User normal vol crear pel·lícula | `403` | `{error: "cal rol admin"}` |
 | Recurs inexistent | `404` | `{error: "no trobat"}` |
-| **Imatge massa gran** | `413` | `{error: "màxim 2 MB"}` |
+| **Imatge massa gran** | `413` | `{error: "màxim 5 MB"}` |
 | **Format no permès** | `415` | `{error: "només JPG o PNG"}` |
 | Error intern | `500` | `{error: "error del servidor"}` |
 
-> Imatge: valida **mida** (`413`) i **tipus** pels magic numbers (`415`). No et fiïs de l'extensió.
+> Imatge: valida **mida** (màx. **5 MB** → `413`) i **tipus** pels magic numbers (JPG/PNG → `415`). No et fiïs de l'extensió. Proporció recomanada del pòster: **2:3** (cartell vertical).
 
 ---
 
@@ -388,6 +401,14 @@ cinecat/
 
 ## 8. PANTALLES PER MAQUETAR
 
+> **El disseny d'alta fidelitat ja existeix** i és part del contracte: veure [docs/design/](design/) (handoff de Claude Design). Obre `docs/design/CineCat.dc.html` en un navegador per veure les pantalles 00–08 i els components. Els **design tokens** (colors, tipografia Geist/Geist Mono, accent teal `#2DD4BF`, espaiats, radis) són a [docs/design/README.md](design/README.md). El tema és **fosc** perquè els pòsters destaquin, i la proporció de pòster és **2:3**.
+>
+> **Components reutilitzables idèntics arreu:** `MovieCard` (pòster 2:3 + xip de nota + títol + any, amb estat "sense pòster") i `RatingSelector` (selector 1–10 amb etiquetes per valor).
+>
+> **Variants d'estat incloses al disseny** (cal implementar-les): catàleg *sense resultats* (01b) i *càrrega/skeleton* (01c); fitxa *sense valoracions* (02b); admin *error de pujada* (05b).
+>
+> **Elements del disseny FORA de l'MVP** (es maqueten però no s'implementen ara): "+ A la meva llista" (watchlist → seria 4a entitat) i la nav "Novetats / Top valorades" (són ordenacions del catàleg, no entitats noves).
+
 ### Web
 
 | Pantalla | Propòsit | Elements clau |
@@ -440,7 +461,7 @@ cinecat/
 | `JWT_SECRET` | Signar/verificar tokens. |
 | `UPLOAD_DIR` | Ruta del volum, p. ex. `/app/uploads`. |
 | `PORT` | Port d'escolta (Railway l'injecta). |
-| `MAX_UPLOAD_MB` | Límit de mida del pòster (p. ex. `2`). |
+| `MAX_UPLOAD_MB` | Límit de mida del pòster (`5`). |
 
 L'API llegeix `DATABASE_URL` a l'arrencada i obre el pool. Mai credencials al codi.
 
