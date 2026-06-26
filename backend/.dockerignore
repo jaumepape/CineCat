@@ -1,0 +1,9 @@
+# No enviem aquests fitxers al context de build de Docker: ni cal, ni volem
+# que acabin a la imatge.
+bin/
+tmp/
+uploads/
+*.test
+*.out
+.env
+.env.local
