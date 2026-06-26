@@ -1,0 +1,34 @@
+# --- Go (backend) ---
+/backend/bin/
+/backend/tmp/
+*.exe
+*.out
+*.test
+
+# Imatges pujades en local (en prod viuen al volum de Railway, no al repo)
+/backend/uploads/
+
+# --- Node / Vue (web) ---
+node_modules/
+/web/dist/
+/web/.vite/
+
+# --- Kotlin Multiplatform (mobile) ---
+.gradle/
+/mobile/build/
+/mobile/*/build/
+local.properties
+/mobile/iosApp/build/
+xcuserdata/
+*.xcworkspace/xcuserdata/
+
+# --- Secrets i entorn ---
+.env
+.env.local
+*.local
+
+# --- Sistema / editor ---
+.DS_Store
+.idea/
+.vscode/
+*.log
