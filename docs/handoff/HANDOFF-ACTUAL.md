@@ -43,7 +43,8 @@ Catàleg de pel·lícules amb valoracions (web Vue + mòbil KMP) sobre API Go + 
 - [ ] Servidor HTTP mínim amb un endpoint `GET /health` que retorni `200` (idiomàtic; pots usar `net/http` directament o `chi` segons `§6`, llegint el `PORT` de l'entorn perquè Railway l'injecta).
 - [ ] Afegir la configuració de desplegament que Railway necessiti (p. ex. fitxer de config / Dockerfile o equivalent), explicant l'opció triada.
 - [ ] Actualitzar el `README.md` arrel (o crear-lo) amb instruccions mínimes per arrencar el backend en local.
-- [ ] (Manual de l'usuari, documentar els passos) Crear el projecte a Railway, afegir-hi el plugin PostgreSQL i connectar el repo. **No cal fer-ho des de la sessió; deixa-ho documentat per a l'usuari.**
+- [ ] Desplegar a Railway **via la CLI des de la sessió** (`railway` v5.23.1 ja instal·lat): `railway init` (crear projecte), `railway add` per al plugin PostgreSQL, `railway up` per desplegar el backend i `railway domain` per generar la URL pública. Documenta les ordres usades.
+  - **Prerequisit:** l'usuari ha d'haver fet `railway login` (interactiu, navegador) abans. Comprova-ho amb `railway whoami`; si no està autenticat, atura't i demana-li que faci `railway login`.
 
 **Fitxers/carpetes implicats:** `backend/` (nou), `web/` i `mobile/` (placeholders), `README.md` arrel.
 
@@ -58,7 +59,8 @@ Catàleg de pel·lícules amb valoracions (web Vue + mòbil KMP) sobre API Go + 
 - [ ] `go run` (o `go build` + executar) al `backend/` aixeca el servidor i `curl localhost:<PORT>/health` retorna `200`.
 - [ ] El servidor llegeix el port de la variable d'entorn `PORT` (amb un valor per defecte raonable per a local).
 - [ ] Hi ha la config de desplegament perquè Railway pugui construir i arrencar el servei.
-- [ ] El `README.md` arrel explica com arrencar-lo en local i quins passos manuals queden a Railway.
+- [ ] El `README.md` arrel explica com arrencar-lo en local.
+- [ ] El servei està desplegat a Railway i `curl https://<domini-railway>/health` retorna `200` (PostgreSQL afegit al projecte però encara sense usar).
 - [ ] PR obert cap a `main` amb descripció clara del que s'ha fet i del checkpoint d'aprenentatge.
 
 ## 6. Avisos i decisions ja preses rellevants per a aquest bloc
@@ -66,4 +68,5 @@ Catàleg de pel·lícules amb valoracions (web Vue + mòbil KMP) sobre API Go + 
 - Stack backend ja decidit (`§6`): Go amb router `chi` (o `net/http` per al simple `/health`), `pgx` per a la BD (encara no s'usa).
 - `.gitignore` ja cobreix Go, Node, KMP i `backend/uploads/`. No el toquis si no cal.
 - Variables d'entorn previstes (`§9`): `PORT`, i més endavant `DATABASE_URL`, `JWT_SECRET`, `UPLOAD_DIR`, `MAX_UPLOAD_MB`. A la Fase 0 només cal `PORT`.
+- **Railway CLI ja instal·lada** (`railway` v5.23.1). El desplegament el fa la sessió per CLI; només cal que l'usuari hagi fet `railway login` un cop. No cal connectar el repo via web ni fer passos manuals al dashboard.
 - **Checkpoint d'aprenentatge de la fase:** entendre com el codi va del git a una URL pública a Railway i com s'injecten les variables d'entorn (sobretot `PORT`).
