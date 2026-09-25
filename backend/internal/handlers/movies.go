@@ -3,6 +3,7 @@ package handlers
 import (
 	"encoding/json"
 	"errors"
+	"log"
 	"net/http"
 	"regexp"
 
@@ -15,7 +16,8 @@ import (
 // Movies agrupa els handlers del catàleg. Rep el store per paràmetre
 // (injecció de dependències): el handler no sap com s'ha obert la BD.
 type Movies struct {
-	Store *storage.MovieStore
+	Store   *storage.MovieStore
+	Posters Posters
 }
 
 // Routes registra les rutes de /api/movies. De moment són obertes; a la
@@ -26,6 +28,7 @@ func (h Movies) Routes(r chi.Router) {
 	r.Get("/{id}", h.get)
 	r.Put("/{id}", h.update)
 	r.Delete("/{id}", h.delete)
+	r.Post("/{id}/poster", h.Posters.Upload)
 }
 
 // uuidRe comprova el format d'un UUID. Si l'id de la URL no en té la forma,
@@ -143,6 +146,12 @@ func (h Movies) delete(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		serverError(w, err)
 		return
+	}
+	// La fila ja no existeix: esborrem també el fitxer del pòster perquè no
+	// quedi orfe al disc. Si falla, la pel·lícula ja està esborrada; només
+	// ho registrem (un fitxer sobrant no trenca res).
+	if err := h.Posters.Files.Remove(id); err != nil {
+		log.Printf("esborrant el pòster de %s: %v", id, err)
 	}
 	w.WriteHeader(http.StatusNoContent)
 }
