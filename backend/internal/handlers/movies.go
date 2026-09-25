@@ -68,9 +68,20 @@ func decodeMovieInput(w http.ResponseWriter, r *http.Request) (models.MovieInput
 	return in, true
 }
 
-// GET /api/movies?q=&genre=
+// GET /api/movies?q=&genre=&status=
+//
+// status=published és el que demana el web públic: sense auth (Fase 4) l'API
+// encara no sap qui és admin, així que és el client qui tria no veure els
+// esborranys. No és una mesura de seguretat (qualsevol pot ometre el
+// paràmetre); a la Fase 4 l'API amagarà els esborranys a qui no sigui admin.
 func (h Movies) list(w http.ResponseWriter, r *http.Request) {
-	movies, err := h.Store.List(r.Context(), r.URL.Query().Get("q"), r.URL.Query().Get("genre"))
+	query := r.URL.Query()
+	status := query.Get("status")
+	if status != "" && status != models.StatusDraft && status != models.StatusPublished {
+		writeError(w, http.StatusBadRequest, "status ha de ser 'draft' o 'published'")
+		return
+	}
+	movies, err := h.Store.List(r.Context(), query.Get("q"), query.Get("genre"), status)
 	if err != nil {
 		serverError(w, err)
 		return
