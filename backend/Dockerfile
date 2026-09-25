@@ -8,13 +8,13 @@
 #    compilador ni el codi font.
 
 # --- Etapa 1: build ---------------------------------------------------------
-FROM golang:1.23-alpine AS build
+FROM golang:1.25-alpine AS build
 WORKDIR /src
 
-# Copiem primer go.mod (i go.sum quan n'hi hagi) i descarreguem dependències
+# Copiem primer go.mod i go.sum i descarreguem dependències
 # en una capa separada. Així Docker reaprofita la cache mentre no canviïn les
 # dependències, encara que canviï el codi.
-COPY go.mod ./
+COPY go.mod go.sum ./
 RUN go mod download
 
 # Ara el codi font i la compilació.
