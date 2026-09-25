@@ -16,6 +16,7 @@ import (
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
 
+	"github.com/jaumepape/cinecat/backend/internal/auth"
 	"github.com/jaumepape/cinecat/backend/internal/handlers"
 	"github.com/jaumepape/cinecat/backend/internal/storage"
 )
@@ -32,6 +33,14 @@ func main() {
 	databaseURL := os.Getenv("DATABASE_URL")
 	if databaseURL == "" {
 		log.Fatal("falta la variable d'entorn DATABASE_URL")
+	}
+
+	// JWT_SECRET signa els tokens de sessió. Qui el tingui pot fabricar un
+	// token d'admin, així que: obligatori, llarg i només a l'entorn (mai al
+	// repo). Es genera, p. ex., amb `openssl rand -base64 48`.
+	tokens, err := auth.NewTokens(os.Getenv("JWT_SECRET"), 7*24*time.Hour)
+	if err != nil {
+		log.Fatal(err)
 	}
 
 	// UPLOAD_DIR: on es desen els pòsters. En local, "uploads" (relatiu a on
@@ -86,6 +95,9 @@ func main() {
 	// HEAD (només capçaleres) respon com el GET corresponent, sense cos. Ho fan
 	// servir navegadors i eines per mirar mida o data d'un fitxer sense baixar-lo.
 	r.Use(middleware.GetHead)
+	// Authenticate identifica QUI fa la petició (anònim, user o admin) a
+	// partir del token. Les rutes decideixen després què pot fer cadascú.
+	r.Use(tokens.Authenticate)
 
 	movieStore := storage.NewMovieStore(pool)
 	posters := handlers.Posters{
@@ -98,8 +110,18 @@ func main() {
 	// Valoracions anònimes: fins a 5 seguides per IP i, després, 1 cada 12 s
 	// (≈ 5 per minut). Molt per sobre d'una persona real, molt per sota d'un script.
 	ratingLimiter := handlers.NewRateLimiter(12*time.Second, 5, trustProxy)
+	// Login i registre: 10 intents seguits i, després, 1 cada 6 s. Frena la
+	// força bruta de contrasenyes sense molestar ningú que s'equivoqui.
+	authLimiter := handlers.NewRateLimiter(6*time.Second, 10, trustProxy)
+	authHandlers := handlers.Auth{Users: storage.NewUserStore(pool), Tokens: tokens}
 
 	r.Get("/health", handlers.Health)
+	r.Route("/api/auth", func(r chi.Router) {
+		r.Use(authLimiter.Middleware)
+		r.Post("/register", authHandlers.Register)
+		r.Post("/login", authHandlers.Login)
+	})
+	r.Put("/api/ratings/{id}", ratings.Update)
 	r.Route("/api/movies", func(r chi.Router) {
 		handlers.Movies{Store: movieStore, Posters: posters}.Routes(r)
 		r.Get("/{id}/ratings", ratings.List)

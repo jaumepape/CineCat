@@ -159,16 +159,16 @@ Un sol contracte per a web i mòbil. Base: `/api`.
 
 | Mètode | Ruta | Qui | Descripció | Demana | Retorna |
 |---|---|---|---|---|---|
-| `POST` | `/api/auth/register` | públic | Crea usuari registrat | `{email, password}` | `{token, user}` |
+| `POST` | `/api/auth/register` | públic | Crea usuari registrat (sempre `role: user`) | `{alias, email, password}` | `{token, user}` |
 | `POST` | `/api/auth/login` | públic | Login (user o admin) | `{email, password}` | `{token, user}` |
-| `GET` | `/api/movies` | públic | Llista catàleg | query `?q=&genre=` | array movies (resum) |
-| `GET` | `/api/movies/{id}` | públic | Fitxa + mitjana | — | movie + `avg_score` + `rating_count` |
+| `GET` | `/api/movies` | públic | Llista catàleg (els esborranys, només per a l'admin) | query `?q=&genre=&status=` | array movies + `avg_score` + `rating_count` |
+| `GET` | `/api/movies/{id}` | públic | Fitxa + mitjana (un esborrany és `404` si no ets admin) | — | movie + `avg_score` + `rating_count` |
 | `POST` | `/api/movies` | **admin** | Crea pel·lícula | JSON metadades | movie creada |
 | `PUT` | `/api/movies/{id}` | **admin** | Edita metadades | JSON metadades | movie actualitzada |
 | `DELETE` | `/api/movies/{id}` | **admin** | Esborra | — | `204` |
 | `POST` | `/api/movies/{id}/poster` | **admin** | **Puja/substitueix pòster** | `multipart/form-data` (`file`) | `{poster_url}` |
 | `GET` | `/api/movies/{id}/ratings` | públic | Llista ressenyes | query `?page=` | array ratings |
-| `POST` | `/api/movies/{id}/ratings` | públic o user | Crea valoració (anònima o registrada) | `{score, comment?, author_label?}` | rating creada |
+| `POST` | `/api/movies/{id}/ratings` | públic o user | Crea valoració (anònima o registrada; una per usuari registrat i pel·lícula) | `{score, comment?, author_label?}` | rating creada |
 | `PUT` | `/api/ratings/{id}` | **user (autor)** | Edita pròpia valoració | `{score, comment?}` | rating actualitzada |
 | `GET` | `/uploads/posters/{file}` | públic | **Serveix la imatge** (bytes) | — | binari (image/jpeg) |
 
@@ -209,12 +209,23 @@ Un sol contracte per a web i mòbil. Base: `/api`.
 { "score": 8, "comment": "M'ha agradat molt", "author_label": "Joan" }
 
 // resposta 201 (user_id null → anònim; author_label és el nom cosmètic)
-{ "id": "r99", "movie_id": "a1b2", "user_id": null,
+{ "id": "r99", "movie_id": "a1b2", "user_id": null, "user_alias": null,
   "score": 8, "comment": "M'ha agradat molt", "author_label": "Joan",
   "created_at": "2026-06-26T10:05:00Z" }
 ```
 
-> Valoració **registrada**: si arriba `Authorization: Bearer <token>`, `user_id` s'omple i la resposta mostra l'`alias` de l'usuari (p. ex. `"@joancinema"`), no l'email.
+> Valoració **registrada**: si arriba `Authorization: Bearer <token>`, `user_id` s'omple, `author_label` s'ignora i la resposta porta `user_alias` amb l'àlies de l'usuari (p. ex. `"joancinema"`, que el client mostra com a `@joancinema`), mai l'email. Un usuari registrat només pot tenir una valoració per pel·lícula: la segona dona `409` i s'ha d'editar amb `PUT /api/ratings/{id}`.
+
+**Registre** — `POST /api/auth/register`
+```json
+// petició (alias: 3–20 caràcters [a-z0-9_]; password: mínim 8)
+{ "alias": "joancinema", "email": "joan@exemple.cat", "password": "••••••••" }
+
+// resposta 201 (login retorna el mateix amb 200)
+{ "token": "eyJhbGciOiJIUzI1NiIs…",
+  "user": { "id": "u1", "email": "joan@exemple.cat", "alias": "joancinema",
+            "role": "user", "created_at": "2026-06-26T10:00:00Z" } }
+```
 
 ### Pujada d'imatge (conceptual)
 
@@ -228,8 +239,10 @@ El navegador envia `POST` amb `Content-Type: multipart/form-data` i un part `fil
 | OK sense cos (delete) | `204` | — |
 | JSON invàlid / `score` fora 1–10 | `400` | `{error: "score ha d'estar entre 1 i 10"}` |
 | Sense token / token invàlid | `401` | `{error: "no autenticat"}` |
-| User normal vol crear pel·lícula | `403` | `{error: "cal rol admin"}` |
+| User normal vol crear pel·lícula; editar la valoració d'un altre | `403` | `{error: "cal rol admin"}` |
 | Recurs inexistent | `404` | `{error: "no trobat"}` |
+| Email o àlies ja registrat; segona valoració del mateix usuari | `409` | `{error: "aquest email ja està registrat"}` |
+| Massa peticions seguides (valorar, login, registre) | `429` | `{error: "massa peticions seguides; espera una mica"}` |
 | **Imatge massa gran** | `413` | `{error: "màxim 5 MB"}` |
 | **Format no permès** | `415` | `{error: "només JPG o PNG"}` |
 | Error intern | `500` | `{error: "error del servidor"}` |

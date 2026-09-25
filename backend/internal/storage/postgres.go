@@ -55,6 +55,9 @@ func Migrate(pool *pgxpool.Pool) error {
 	if err != nil {
 		return fmt.Errorf("preparant les migracions: %w", err)
 	}
+	// El driver reté una connexió del pool mentre és obert. Si no el tanquem,
+	// aquella connexió no torna mai al pool (i pool.Close() es queda esperant).
+	defer m.Close()
 	if err := m.Up(); err != nil && !errors.Is(err, migrate.ErrNoChange) {
 		return fmt.Errorf("aplicant migracions: %w", err)
 	}

@@ -17,12 +17,16 @@ const (
 // Rating és una valoració tal com la retorna l'API (§4).
 //
 // UserID és un punter perquè pot ser null: null = valoració anònima. És
-// l'única diferència entre una valoració anònima i una de registrada (Fase 4):
+// l'única diferència entre una valoració anònima i una de registrada:
 // mateixa taula, mateix endpoint.
+//
+// UserAlias és l'àlies públic de l'autor registrat (null si és anònima). Es
+// mostra l'àlies, MAI l'email: l'email és una dada privada.
 type Rating struct {
 	ID          string    `json:"id"`
 	MovieID     string    `json:"movie_id"`
 	UserID      *string   `json:"user_id"`
+	UserAlias   *string   `json:"user_alias"`
 	Score       int       `json:"score"`
 	Comment     *string   `json:"comment"`
 	AuthorLabel *string   `json:"author_label"` // nom lliure d'un anònim; només cosmètic
@@ -34,6 +38,18 @@ type RatingInput struct {
 	Score       int     `json:"score"`
 	Comment     *string `json:"comment"`
 	AuthorLabel *string `json:"author_label"`
+}
+
+// RatingUpdateInput és el cos de PUT /api/ratings/{id}: només la nota i el
+// comentari. La pel·lícula i l'autor d'una valoració no canvien mai.
+type RatingUpdateInput struct {
+	Score   int     `json:"score"`
+	Comment *string `json:"comment"`
+}
+
+// AsInput reutilitza la normalització i la validació de RatingInput.
+func (in RatingUpdateInput) AsInput() RatingInput {
+	return RatingInput{Score: in.Score, Comment: in.Comment}
 }
 
 // Normalize treu espais sobrants i converteix els textos buits en null: "no

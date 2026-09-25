@@ -153,6 +153,17 @@ func (s *MovieStore) SetPosterPath(ctx context.Context, id, path string) error {
 	return nil
 }
 
+// Status retorna l'estat editorial ('draft' | 'published') d'una pel·lícula,
+// o ErrNotFound. Serveix per decidir si un visitant la pot veure.
+func (s *MovieStore) Status(ctx context.Context, id string) (string, error) {
+	var status string
+	err := s.pool.QueryRow(ctx, `SELECT status FROM movies WHERE id = $1`, id).Scan(&status)
+	if errors.Is(err, pgx.ErrNoRows) {
+		return "", ErrNotFound
+	}
+	return status, err
+}
+
 // Exists diu si hi ha una pel·lícula amb aquest id.
 func (s *MovieStore) Exists(ctx context.Context, id string) (bool, error) {
 	var exists bool

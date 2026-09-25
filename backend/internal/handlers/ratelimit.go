@@ -54,7 +54,7 @@ func (rl *RateLimiter) Middleware(next http.Handler) http.Handler {
 		if !rl.allow(clientIP(r, rl.trustProxy)) {
 			// Retry-After diu al client quants segons ha d'esperar.
 			w.Header().Set("Retry-After", strconv.Itoa(int(math.Ceil(rl.every.Seconds()))))
-			writeError(w, http.StatusTooManyRequests, "massa valoracions seguides; espera una mica")
+			writeError(w, http.StatusTooManyRequests, "massa peticions seguides; espera una mica")
 			return
 		}
 		next.ServeHTTP(w, r)
