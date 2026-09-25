@@ -1,4 +1,4 @@
-# Handoff — CineCat · Fase 3 (web públic + valoracions anònimes)
+# Handoff — CineCat · Fase 4 (autenticació + àrea d'administració)
 
 > Enganxa aquest document com a primer missatge d'una sessió nova, o digues a la sessió: *"llegeix `docs/handoff/HANDOFF-ACTUAL.md` i comença"*. Manté el context lleuger: apunta als documents font, no els repeteix.
 
@@ -9,9 +9,9 @@
 Ets l'arquitecte/mentor del projecte **CineCat**. Abans de fer res, **llegeix** aquests fitxers del repo (font de veritat):
 
 - `docs/README.md` — índex i 3 idees clau.
-- `docs/ESPECIFICACIO.md` — rellevants ara: **§4** (endpoints de `ratings`, exemple de valoració anònima, codis d'error), **§5 "Cicle de vida B"** (visitant anònim valora, amb la mitigació d'abús), **§6 Frontend web** (Vue 3 + Vite, Vue Router, Pinia, `fetch`), **§7** (carpetes de `web/src/`) i **§8** (pantalles i variants d'estat).
-- `docs/design/README.md` — **contracte visual**. Ara importen: sistema de disseny, **01 Catàleg** (+ 01b sense resultats, 01c càrrega), **02 Fitxa** (+ 02b sense valoracions), components **`MovieCard`** i **`RatingSelector`**, botons/xips/inputs, *Interactions & Behavior*, *State Management* i **Design Tokens**. Obre `docs/design/CineCat.dc.html` al navegador per veure-ho.
-- `docs/PLA-IMPLEMENTACIO.md` — el pla per fases. **Aquest bloc és la Fase 3.**
+- `docs/ESPECIFICACIO.md` — rellevants ara: **§2 Flux A** (històries de l'admin), **§3** (`users`: `alias`, `password_hash`, `role`), **§4** (auth, rutes protegides, valoració registrada, codis `401`/`403`), **§5 Cicle de vida A** (l'admin crea una pel·lícula i hi puja el pòster), **§6** (`golang-jwt/jwt`, `bcrypt`, Pinia per al token) i **§9** (`JWT_SECRET`, pas 8: crear el primer admin).
+- `docs/design/README.md` — pantalles **03 Inici de sessió / Registre**, **04 Admin — llistat**, **05 Admin — formulari** (+ **05b error de pujada**), el *segmented control* Anònim / "Com a @àlies" de la **02 Fitxa**, i *State Management* (`currentUser`, `uploadError`). Obre `docs/design/CineCat.dc.html` al navegador.
+- `docs/PLA-IMPLEMENTACIO.md` — el pla per fases. **Aquest bloc és la Fase 4.**
 
 > No dupliquis el contingut d'aquests fitxers a la conversa; consulta'ls quan els necessitis.
 
@@ -21,78 +21,98 @@ Catàleg de pel·lícules amb valoracions (web Vue + mòbil KMP) sobre API Go + 
 
 ## 2. Regles de treball (no negociables)
 
-- **Mai treballar sobre `main`.** Aquest bloc: crea la branca `feat/fase-3-web-public` → commits → push → `gh pr create`. L'usuari (jaumepape) revisa i fusiona. **No fusionar el PR tu mateix** si no t'ho demana explícitament.
+- **Mai treballar sobre `main`.** Aquest bloc: crea la branca `feat/fase-4-auth-admin` → commits → push → `gh pr create`. L'usuari (jaumepape) revisa i fusiona. **No fusionar el PR tu mateix** si no t'ho demana explícitament.
 - En començar: `git checkout main && git pull --prune`.
-- No escriguis codi fora de l'abast d'aquest bloc (res d'auth, admin ni mòbil).
+- No escriguis codi fora de l'abast d'aquest bloc (res de mòbil ni de desplegament del web).
 - Aquest és un projecte d'aprenentatge: explica el **perquè** de cada decisió, no només el què.
+- **Mai credencials al repo:** ni `JWT_SECRET`, ni contrasenyes de l'admin, ni hashes de prova.
 
 ## 3. Estat actual del repo
 
-- **Branca base:** `main` a `17cdc87` (Merge PR #8). **Verifica-ho** amb `git log -1 --oneline` després del `git pull`.
+- **Branca base:** `main` a `4069118` (Merge PR #10). **Verifica-ho** amb `git log -1 --oneline` després del `git pull`.
 - **Fet fins ara:**
-  - **Fase 0** (PR #5): esquelet Go, `Dockerfile` multi-etapa, `railway.json` amb healthcheck `/health`.
-  - **Fase 1** (PR #6): taules `users`/`movies`/`ratings` (migració aplicada en arrencar), CRUD `/api/movies` amb `?q=`/`?genre=`, fitxa amb `avg_score`/`rating_count` calculats per SQL, `scripts/seed.sh` (7 pel·lícules del disseny).
-  - **Fase 2** (PR #8): `POST /api/movies/{id}/poster` (413/415, 500px, JPEG) i `GET /uploads/posters/<id>.jpg` (cache `no-cache` + `304`). `UPLOAD_DIR`/`MAX_UPLOAD_MB`. Go **1.26** (Dockerfile inclòs).
-- **Patrons del backend a reaprofitar:** `internal/handlers/respond.go` (`writeJSON`, `writeError`, `serverError`), `movieID()` (id no-UUID → `404`), `decodeMovieInput` (JSON amb `DisallowUnknownFields` + límit de mida + `Normalize`/`Validate` a `models`), `storage` amb SQL parametritzat i `ErrNotFound`. Els nous endpoints de ratings han de seguir el mateix estil.
-- **`web/`** només conté un `README.md` placeholder. Entorn local: Node **22.17**, npm 10.9.
-- **⚠️ Railway NO està desplegat.** `backend` i `Postgres` estan en estat **REMOVED** des del 26/06/2026 (cal que l'usuari reactivi el compte). Les ordres pendents (Postgres, `DATABASE_URL`, volum `/app/uploads`, `UPLOAD_DIR`, deploy) són a la descripció del PR #8 i al `README.md`. Les ordres `railway` de desplegament les bloqueja el classificador de permisos: proposa-les a l'usuari, no les forcis. **Aquesta fase es fa i es verifica en local.**
-- **Fase del pla on som:** Fase 3 (la quarta).
+  - **Fases 0–2** (PR #5, #6, #8): API Go amb `chi` + `pgx`, migració `000001_init` (les 3 taules; `users` existeix però **està buida i sense cap codi que la faci servir**), CRUD `/api/movies`, pòsters (`POST .../poster` + `GET /uploads/posters/<id>.jpg`).
+  - **Fase 3** (PR #10): `GET`/`POST /api/movies/{id}/ratings` (anònimes, `user_id = NULL`, 20 per pàgina, límit per IP → `429`); `GET /api/movies` amb `avg_score`/`rating_count` i `?status=`; **web públic** a `web/` (Vue 3 + Vite + Router + Pinia, en **JavaScript**): catàleg, fitxa, formulari de valoració anònima.
+- **Punts d'enganxament que ja esperen aquesta fase:**
+  - `internal/handlers/ratings.go` → `Create` té `var userID *string // anònim; la Fase 4 l'omplirà a partir del token`.
+  - `internal/handlers/ratelimit.go` → `RateLimiter` reutilitzable (p. ex. per a `/api/auth/login`).
+  - `web/src/api/client.js` → `request()` és l'únic punt que fa `fetch`: és on s'ha d'afegir la capçalera `Authorization`.
+  - `web/src/api/ratings.js` → `createRating` ja diu que la Fase 4 hi afegirà el token.
+  - `web/src/components/RatingForm.vue` → l'opció "Com a @àlies" està **desactivada**. `AppHeader.vue` → "Inicia sessió" està **desactivat**.
+  - `web/src/api/movies.js` → el web públic demana `?status=published`. **No és seguretat**: ara ho ha de fer l'API.
+- **Entorn local:** Go 1.26, Node 22.17. `.claude/launch.json` (sense commit) té una configuració `web` per arrencar Vite al navegador de l'app. Per provar: Postgres amb Docker + `backend/scripts/seed.sh` (veure `README.md`).
+- **⚠️ Railway NO està desplegat.** `backend` i `Postgres` estan en estat **REMOVED** des del 26/06/2026. Cal que l'usuari reactivi el compte; les ordres pendents són al PR #8 i al `README.md`, més `TRUST_PROXY=true` i, ara, `JWT_SECRET`. Les ordres `railway` de desplegament les bloqueja el classificador de permisos: proposa-les, no les forcis. **Aquesta fase es fa i es verifica en local.**
+- **Fase del pla on som:** Fase 4 (la cinquena).
 
-## 4. El bloc d'AQUESTA sessió — Fase 3
+## 4. El bloc d'AQUESTA sessió — Fase 4
 
-**Objectiu:** un catàleg navegable i valorable des del navegador, encara sense login. Qualsevol visitant pot obrir una fitxa i deixar-hi una valoració anònima que actualitza la mitjana.
+**Objectiu:** distingir els tres casos (anònim / `user` / `admin`) amb un token JWT, protegir per rol el manteniment del catàleg, permetre valoracions registrades i donar a l'admin una àrea web per crear i editar pel·lícules amb el seu pòster.
 
-**Branca a crear:** `feat/fase-3-web-public`
+**Branca a crear:** `feat/fase-4-auth-admin`
 
-**Ordre recomanat:** primer el backend (endpoints de valoració, provats amb `curl`), en un commit propi; després el web. Si el context de la sessió creix massa, és acceptable tancar el backend en un PR i deixar el web per a una sessió nova amb un handoff 3b.
+**Ordre recomanat:** primer tot el **backend** (provat amb `curl`), en commits propis; després el **web**. És la fase més gran del projecte: si el context de la sessió creix massa, tanca el backend en un PR i genera un handoff **4b** per al web.
 
-**Tasques — backend:**
-- [ ] **`GET /api/movies/{id}/ratings?page=`**: llista paginada (mida de pàgina fixa, p. ex. 20; més recents primer). `404` si la pel·lícula no existeix.
-- [ ] **`POST /api/movies/{id}/ratings`**: `{score, comment?, author_label?}` → `201` amb la valoració (format de l'exemple de §4, `user_id: null`). Sense token → `user_id = NULL`.
-  - [ ] Validació: `score` enter 1–10 (`400` `{"error":"score ha d'estar entre 1 i 10"}`), longitud màxima de `comment` i `author_label`, camps desconeguts → `400`.
-  - [ ] **Rate limit per IP** mínim (§5, Cicle B) → `429`. Pensa en la IP real darrere del proxy de Railway (`X-Forwarded-For`) i explica-ho.
-- [ ] **`GET /api/movies`** ha de retornar també **`avg_score` i `rating_count`** per a cada pel·lícula: la `MovieCard` mostra el xip de nota. Fes-ho amb una sola consulta (`LEFT JOIN` + `GROUP BY`, o una subconsulta), no amb N consultes.
-- [ ] Models a `internal/models/rating.go`; SQL a `internal/storage/ratings.go`; handlers a `internal/handlers/ratings.go`.
+### Backend
 
-**Tasques — web (`web/`):**
-- [ ] Inicialitzar **Vue 3 + Vite + Vue Router + Pinia** (JavaScript o TypeScript: decideix i justifica). Estructura de §7: `views/`, `components/`, `stores/`, `api/`.
-- [ ] **Proxy de Vite** perquè `/api` i `/uploads` vagin a `http://localhost:8080` en desenvolupament: així el web i l'API semblen el mateix origen, `poster_url` (relativa) funciona tal qual i no cal CORS.
-- [ ] Capa **`api/`**: funcions `fetch` per a cada endpoint que es fa servir; converteixen els errors `{error}` de l'API en excepcions amb el missatge.
-- [ ] **Design tokens** com a variables CSS (colors, tipografia Geist/Geist Mono, radis, espaiats) segons `docs/design/README.md`. Tema fosc.
-- [ ] Components reutilitzables **`MovieCard`** (pòster 2:3, xip de nota, títol, any; estat "sense pòster") i **`RatingSelector`** (1–10 amb hover i clic).
-- [ ] Vista **Catàleg** (01): capçalera, cerca per títol (amb debounce), xips de gènere, graella de `MovieCard`. Variants **01b sense resultats** (amb "Esborra els filtres") i **01c càrrega** (skeletons). La cerca i el gènere, a la query de la URL (`/?q=…&genre=…`), perquè es puguin compartir i el botó enrere funcioni.
-- [ ] Vista **Fitxa** (02): pòster, metadades (`2021 · 1h 52min · Dir. …`), mitjana (format català: `7,8`) i nombre de valoracions, sinopsi, llista de valoracions (paginada: "Carrega'n més") i formulari de valoració anònima. Variant **02b sense valoracions** (nota "—").
-- [ ] Després d'enviar una valoració: refrescar la fitxa (mitjana i llista) i netejar el formulari. Mostrar els errors de l'API (`400`, `429`) al formulari.
+- [ ] **Paquet `internal/auth/`** (§7): hash i comprovació de contrasenyes amb **bcrypt**; emissió i verificació de **JWT** (HS256 amb `JWT_SECRET`) amb `sub` (id de l'usuari), `role`, `alias` i caducitat (`exp`).
+- [ ] **`JWT_SECRET` obligatori** a l'arrencada (com `DATABASE_URL`): sense secret, o si és massa curt (p. ex. < 32 bytes), el servidor no arrenca.
+- [ ] **`POST /api/auth/register`** `{alias, email, password}` → `201 {token, user}`. `user` = `{id, alias, email, role}` (mai el hash). Valida el format d'email (normalitzat a minúscules), la contrasenya (mínim 8 caràcters, com el disseny) i l'àlies. Email o àlies repetit → **`409`**. Sempre es crea amb `role = 'user'`: el rol mai el tria el client.
+- [ ] **`POST /api/auth/login`** `{email, password}` → `200 {token, user}`. Credencials incorrectes → `401` amb un **missatge genèric** (no diguis si l'email existeix). Aplica-hi el `RateLimiter` (força bruta).
+- [ ] **Middleware d'auth** que llegeix `Authorization: Bearer <token>` i posa l'usuari al `context` de la petició: **sense token → anònim (vàlid)**; token invàlid o caducat → `401`. Més un middleware **`RequireRole("admin")`**: anònim → `401` `{"error":"no autenticat"}`, `user` → `403` `{"error":"cal rol admin"}`.
+- [ ] **Protegir** `POST/PUT/DELETE /api/movies` i `POST /api/movies/{id}/poster` → només `admin`.
+- [ ] **Esborranys a l'API:** `GET /api/movies` i `GET /api/movies/{id}` només retornen `draft` a l'admin; per a la resta, un esborrany és un `404` a la fitxa i no surt al llistat, encara que es demani `?status=draft`.
+- [ ] **Valoració registrada:** a `POST /api/movies/{id}/ratings`, si hi ha un usuari al context, `user_id` s'omple (i s'ignora `author_label`).
+- [ ] **Àlies a les valoracions:** `GET .../ratings` i les respostes de valoració inclouen l'àlies de l'autor si és registrada (`LEFT JOIN users`), mai l'email. Tria el nom del camp (p. ex. `user_alias`, `null` si és anònima) i **actualitza §4** d'`ESPECIFICACIO.md`.
+- [ ] **`PUT /api/ratings/{id}`** `{score, comment?}`: només l'autor. Anònim → `401`; un altre usuari → `403`; una valoració anònima no la pot editar ningú (`403`); inexistent → `404`.
+- [ ] **Primer admin:** una comanda `backend/cmd/createadmin` (p. ex. `go run ./cmd/createadmin -email … -alias …`) que llegeix la contrasenya **per stdin o per una variable d'entorn**, mai com a argument, i crea l'usuari amb `role = 'admin'` (o promociona un usuari existent). Documenta-ho al README.
+- [ ] **Actualitza `ESPECIFICACIO.md` §4** amb els canvis de contracte: `register` demana també `alias`, el camp d'àlies a les valoracions i el `409`.
 
-**Fitxers/carpetes implicats:** `backend/internal/{models,storage,handlers}/` (ratings + llistat amb mitjana), `backend/cmd/server/main.go` (rutes, rate limit), `web/` (projecte nou sencer), `README.md` (com arrencar el web).
+### Web (`web/`)
+
+- [ ] **Store d'auth (Pinia):** `token` i `user` (`currentUser`), `login`, `register`, `logout`. Persistència del token: tria i justifica (`localStorage` és el més simple; explica el risc de XSS i per què aquí és acceptable). En arrencar, si el token ha caducat, es descarta.
+- [ ] **`api/client.js`:** afegeix `Authorization: Bearer <token>` quan hi ha sessió. Un `401` en una petició autenticada tanca la sessió (token caducat o invàlid).
+- [ ] **Vista 03 — Inicia sessió / Registre:** les dues targetes del disseny, el bàner "Iniciar sessió és opcional…" i "o bé continua com a visitant →". Errors de l'API (`401`, `409`, `400`) als formularis. "Has oblidat la contrasenya?" es mostra però **no** fa res (fora d'abast).
+- [ ] **Capçalera:** sense sessió → "Inicia sessió"; amb sessió → xip amb l'àlies + "Surt"; si és admin → badge **ADMIN** i enllaç a l'àrea d'admin.
+- [ ] **Guard de rutes:** `/admin/**` només per a `admin` (`meta.requiresAdmin`); altrament, redirigeix a login (o al catàleg si ja és `user`). **Recorda:** el guard és comoditat d'interfície; la seguretat real és el `401`/`403` de l'API.
+- [ ] **Vista 04 — Admin, llistat:** la taula del disseny (miniatura, títol + vots, any, direcció, gèneres, nota, estat Publicada/Esborrany, "Edita"), cerca, "+ Afegeix pel·lícula" i esborrar amb confirmació. Hi surten també els **esborranys**.
+- [ ] **Vista 05 — Admin, formulari (crear/editar):** títol, any, durada, direcció, gèneres (xips amb "×" + afegir, de la llista tancada), sinopsi i estat (publicada/esborrany); pòster amb **previsualització local** (`URL.createObjectURL`) abans de pujar-lo. Desar = `POST`/`PUT` de les metadades **i després**, si hi ha fitxer nou, `POST .../poster` (dues peticions, §4).
+- [ ] **Variant 05b:** si el fitxer no és JPG/PNG o passa de 5 MB, s'avisa **al client abans de pujar-lo** (zona vermella, xip del fitxer rebutjat, "Desa" desactivat). Si igualment l'API respon `413`/`415`, es mostra el mateix estat.
+- [ ] **Valoració registrada a la fitxa:** amb sessió, "Com a @àlies" s'activa i s'envia amb token; la llista mostra l'àlies. A les valoracions pròpies, un botó per **editar-les** (`PUT /api/ratings/{id}`).
+- [ ] **Treure `status: 'published'`** de `api/movies.js` (ara filtra l'API) o deixar-ho explícit; explica-ho.
+
+**Fitxers/carpetes implicats:** `backend/internal/auth/` (nou), `backend/internal/{models,storage,handlers}/` (users, auth, ratings), `backend/cmd/server/main.go`, `backend/cmd/createadmin/` (nou), possiblement `backend/migrations/000002_*.sql`, `web/src/{stores,api,views,components}/`, `web/src/router.js`, `README.md`, `docs/ESPECIFICACIO.md` (§4).
 
 **FORA d'abast (no tocar ara):**
-- Auth, login/registre, valoració **registrada**, `PUT /api/ratings/{id}` (Fase 4). Al formulari, el segmented control "Anònim / Com a @…" es mostra amb l'opció registrada **deshabilitada** (o amagada).
-- Vistes d'admin i pujada de pòsters des del web (Fase 4).
-- "+ A la meva llista" (watchlist) i la nav "Novetats / Top valorades" (fora de l'MVP, §8): es poden maquetar però no fan res.
-- Servir el build de Vue des de Go i el desplegament del web (es decidirà a la Fase 6 / §9 pas 7).
-- Mòbil.
+- Recuperar la contrasenya, verificar l'email, refresh tokens, OAuth, canviar la contrasenya o l'àlies, esborrar el compte.
+- Gestió d'usuaris des del web (promocionar a admin es fa amb `createadmin`).
+- Moderar o esborrar valoracions d'altres; watchlist ("+ A la meva llista"); "Novetats" / "Top valorades".
+- Mòbil (Fase 5) i desplegament del web (Fase 6).
 
 ## 5. Com es verifica (Definition of Done)
 
-- [ ] `curl`: `POST .../ratings` amb `{"score":8,"comment":"…","author_label":"Joan"}` → `201` i `user_id: null`; `score: 11` → `400`; massa peticions seguides → `429`; pel·lícula inexistent → `404`.
-- [ ] `GET .../ratings?page=1` i `?page=2` retornen pàgines diferents, les més recents primer.
-- [ ] `GET /api/movies` inclou `avg_score`/`rating_count` per a cada pel·lícula (`null`/`0` sense valoracions).
-- [ ] A la BD, la fila nova de `ratings` té `user_id = NULL`.
-- [ ] Amb `npm run dev` + backend local (amb `seed.sh` i uns quants pòsters pujats): navegues pel catàleg, cerques, filtres per gènere (i la URL ho reflecteix), obres una fitxa i hi veus el pòster.
-- [ ] Deixes una valoració anònima des del web i la mitjana i el recompte s'actualitzen sense recarregar la pàgina.
-- [ ] Es veuen les variants: sense resultats, càrrega (skeleton) i fitxa sense valoracions; una pel·lícula sense pòster mostra el placeholder.
-- [ ] El web s'assembla al disseny (tokens, tipografia, `MovieCard`, `RatingSelector`) i funciona a amplada de mòbil sense scroll horitzontal.
-- [ ] `npm run build` sense errors; `go vet ./...` net i `docker build` del backend correcte.
-- [ ] PR obert cap a `main` amb descripció clara, captures del web i el checkpoint d'aprenentatge.
+- [ ] `curl`: register → `201` amb token; el mateix email o àlies → `409`; login correcte → `200`; contrasenya incorrecta → `401` genèric; massa intents de login → `429`.
+- [ ] `POST /api/movies` **sense token → `401`**, **amb token de `user` → `403`**, **amb token d'`admin` → `201`**. El mateix per a `PUT`, `DELETE` i `/poster`. Un token manipulat o caducat → `401`.
+- [ ] Un esborrany no surt a `GET /api/movies` ni a la fitxa (`404`) sense token d'admin; amb token d'admin, sí.
+- [ ] Una valoració amb token de `user` es desa amb `user_id` i la llista en mostra l'àlies (mai l'email); sense token continua sent anònima.
+- [ ] `PUT /api/ratings/{id}`: l'autor → `200`; un altre usuari → `403`; sense token → `401`; valoració anònima → `403`.
+- [ ] `go run ./cmd/createadmin …` crea l'admin sense que la contrasenya aparegui a l'historial de la shell ni al repo.
+- [ ] Web: l'admin entra, veu el badge ADMIN, crea una pel·lícula **en esborrany amb pòster** (amb previsualització), la publica i la veu al catàleg públic.
+- [ ] Web: pujar un GIF o un fitxer de > 5 MB mostra l'estat 05b sense arribar a pujar-lo.
+- [ ] Web: un usuari registrat valora "Com a @àlies", ho veu associat al seu àlies i en pot editar la nota; un visitant continua valorant anònimament.
+- [ ] Web: un `user` que obre `/admin` a mà no hi entra, i un `401` d'un token caducat tanca la sessió.
+- [ ] `npm run build` sense errors; `go vet ./...` net; `docker build` correcte; el web funciona a 375px sense scroll horitzontal.
+- [ ] PR obert cap a `main` amb descripció clara i el checkpoint d'aprenentatge.
 
 ## 6. Avisos i decisions ja preses rellevants per a aquest bloc
 
-- **Anònim vs. registrat** (§3): una sola taula `ratings` amb `user_id` nullable i **el mateix endpoint** per a tots dos casos. A la Fase 4 només s'hi afegirà "si hi ha token, omple `user_id`".
-- **Contracte d'API:** mana `ESPECIFICACIO.md §4` (`user_id`, `author_label`, `comment`, `created_at` en snake_case). El *Data model* de `docs/design/README.md` (camelCase, `author: {alias}`) és orientatiu; si cal, adapta'l a la capa `api/` del web, no a l'API.
-- **Mitigació d'abús (§5):** rate limit per IP + validació de `score` i de longitud. **No** CAPTCHA ni moderació. Un limitador en memòria (p. ex. `golang.org/x/time/rate` per IP, o un comptador amb finestra) és suficient: hi ha una sola instància. Explica'n la limitació (es perd en reiniciar; no serveix amb N rèpliques).
-- **La mitjana no es guarda** (Fase 1): tant la fitxa com el llistat la calculen amb `AVG`/`COUNT`. No afegeixis columnes de mitjana a `movies`.
-- **Esborranys:** `GET /api/movies` retorna encara les pel·lícules `draft` (no hi ha auth per distingir l'admin). Decideix si el web públic les amaga (filtre al client o un paràmetre `?status=published`) i explica-ho; la separació definitiva arriba a la Fase 4.
-- **Pòsters:** `poster_url` és relativa (`/uploads/posters/<id>.jpg`); amb el proxy de Vite funciona sense canvis. Proporció 2:3 amb `object-fit: cover`.
-- **Fonts:** Geist i Geist Mono (Google Fonts o paquet npm `geist`).
-- **Checkpoint d'aprenentatge de la fase:** entendre com el web consumeix l'API (proxy, `fetch`, estats de càrrega/error) i com una ressenya anònima viatja fins a la BD amb `user_id = NULL` pel mateix endpoint que faran servir les registrades.
+- **Un sol camp de rol** (`users.role`: `admin` | `user`) i cap taula de permisos (§3).
+- **Mateix endpoint de valoració** per a anònims i registrats (§3, §4): la diferència és només si hi ha usuari al context. És el checkpoint de la fase.
+- **Decisions que has de prendre i explicar:**
+  - **Una valoració per usuari i pel·lícula?** El pla diu "editar la seva nota", que suggereix que sí. Opció recomanada: índex únic parcial `(movie_id, user_id) WHERE user_id IS NOT NULL` (migració `000002`), `409` si ja n'hi ha una, i el web passa a mode "edita la teva valoració". Els anònims no tenen aquest límit (no es poden identificar).
+  - **Caducitat del JWT** (p. ex. 7 dies) i què passa en caducar (el web tanca la sessió). Sense refresh tokens.
+  - **On es guarda el token al web** (`localStorage` vs. memòria vs. cookie `HttpOnly`): pros i contres, i per què tries el que tries.
+  - **Àlies:** format permès (p. ex. `[a-z0-9_]{3,20}`), si es mostra amb `@` i si és únic sense distingir majúscules.
+- **Seguretat bàsica:** bcrypt amb el cost per defecte; comparació de contrasenyes sempre amb `bcrypt.CompareHashAndPassword` (temps constant); el JWT es verifica fixant l'algorisme esperat (rebutja `alg: none` i altres algorismes); `JWT_SECRET` només per variable d'entorn.
+- **Primer admin a Railway:** `createadmin` s'executa en local contra la BD de Railway amb la URL **pública** de Postgres (`DATABASE_PUBLIC_URL`), no amb la interna. Deixa-ho escrit al README per quan es desplegui.
+- **El límit per IP de les valoracions** es manté també per als usuaris registrats.
+- **Checkpoint d'aprenentatge de la fase:** entendre com un token distingeix els tres casos (anònim / `user` / `admin`) i com es protegeixen les rutes per rol; per què la protecció de veritat és a l'API i no al guard del web; i per què el mateix endpoint de valoració serveix anònims i registrats.
