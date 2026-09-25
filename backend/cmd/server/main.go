@@ -122,6 +122,16 @@ func main() {
 		r.Post("/login", authHandlers.Login)
 	})
 	r.Put("/api/ratings/{id}", ratings.Update)
+
+	// WEB_DIR: el build de Vue (web/dist). A la imatge Docker és /app/web i
+	// l'API serveix el web des del mateix origen. En desenvolupament no hi
+	// és (el web el serveix Vite) i aleshores les rutes desconegudes donen
+	// el 404 JSON de sempre.
+	web := handlers.NewWeb(os.Getenv("WEB_DIR"))
+	if web.Enabled() {
+		log.Printf("servint el web des de %s", web.Dir)
+	}
+	r.NotFound(web.Handler)
 	r.Route("/api/movies", func(r chi.Router) {
 		handlers.Movies{Store: movieStore, Posters: posters}.Routes(r)
 		r.Get("/{id}/ratings", ratings.List)

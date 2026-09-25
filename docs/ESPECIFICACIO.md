@@ -452,7 +452,7 @@ cinecat/
 |---|---|
 | **PostgreSQL** (plugin gestionat) | BD. Dona la `DATABASE_URL`. |
 | **API Go** | Servei principal; compila des del repo, exposa URL pública. |
-| **Frontend Vue** | **Opció A (recomanada):** servir el build estàtic des de la mateixa API Go (una sola URL, evita CORS). Opció B: servei estàtic separat. |
+| **Frontend Vue** | **Opció A (triada):** servir el build estàtic des de la mateixa API Go (una sola URL, evita CORS). Una sola imatge Docker (`Dockerfile` a l'arrel: Node → Go → runtime); les rutes del SPA tornen `index.html`, i `/api` i `/uploads` inexistents, un 404 JSON. Opció B: servei estàtic separat. |
 
 ### On viuen les imatges en producció
 

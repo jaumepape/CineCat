@@ -42,7 +42,7 @@ La manera més ràpida és un contenidor d'usar i llençar:
 docker run -d --name cinecat-pg -e POSTGRES_PASSWORD=dev -e POSTGRES_DB=cinecat -p 5432:5432 postgres:16-alpine
 ```
 
-### 2a. El servidor amb Go instal·lat
+### 2a. El servidor amb Go instal·lat (el web, a part amb Vite)
 
 ```bash
 cd backend
@@ -51,15 +51,18 @@ export JWT_SECRET="$(openssl rand -base64 48)"
 go run ./cmd/server
 ```
 
-### 2b. El servidor amb Docker (no cal tenir Go instal·lat)
+### 2b. Tot amb Docker: API + web (no cal tenir Go ni Node)
 
-Fem servir el **mateix Dockerfile** que Railway, així el que funciona en local funciona desplegat.
+El [`Dockerfile`](Dockerfile) de l'**arrel** és el mateix que fa servir Railway: compila el web (Node), l'API (Go) i en fa una sola imatge on l'API també serveix el web. Així el que funciona en local funciona desplegat.
 
 ```bash
-cd backend
-docker build -t cinecat-backend .
-docker run --rm -p 8080:8080 -e JWT_SECRET="$(openssl rand -base64 48)" -e DATABASE_URL='postgres://postgres:dev@host.docker.internal:5432/cinecat?sslmode=disable' cinecat-backend
+docker build -t cinecat .
+docker run --rm -p 8080:8080 -v cinecat-uploads:/app/uploads \
+  -e JWT_SECRET="$(openssl rand -base64 48)" \
+  -e DATABASE_URL='postgres://postgres:dev@host.docker.internal:5432/cinecat?sslmode=disable' cinecat
 ```
+
+Obre `http://localhost:8080`: el web, l'API (`/api`) i els pòsters (`/uploads`) surten del mateix servidor. El volum `cinecat-uploads` fa el paper del volum de Railway.
 
 ### 3. El primer admin
 
@@ -119,7 +122,13 @@ Vite reenvia `/api` i `/uploads` al backend (proxy a `web/vite.config.js`), aix�
 
 ## Desplegament a Railway
 
-El backend es desplega a Railway des de la CLI amb el seu `Dockerfile`. La configuració del build i el healthcheck (`/health`) viuen a [`backend/railway.json`](backend/railway.json). El detall de les ordres usades es documenta a la descripció del PR de cada fase.
+Un sol servei (`backend`) amb la imatge del [`Dockerfile`](Dockerfile) de l'arrel: l'API Go serveix també el web (§9, Opció A), i els pòsters viuen en un volum. La configuració del build i el healthcheck (`/health`) són a [`railway.json`](railway.json). Es desplega des de l'**arrel** del repo:
+
+```bash
+railway up --service backend --ci
+```
+
+Una sola rèplica: el volum i el límit de peticions per IP són locals al contenidor.
 
 Variables d'entorn a Railway: `PORT` (la injecta Railway), `DATABASE_URL` (referenciada al plugin Postgres: `${{Postgres.DATABASE_URL}}`), `UPLOAD_DIR=/app/uploads`, `TRUST_PROXY=true` i `JWT_SECRET` (veure [ESPECIFICACIO.md §9](docs/ESPECIFICACIO.md#9-pla-de-desplegament-a-railway)).
 
