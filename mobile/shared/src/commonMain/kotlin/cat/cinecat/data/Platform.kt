@@ -16,7 +16,9 @@ import io.ktor.client.HttpClientConfig
 expect fun createHttpClient(config: HttpClientConfig<*>.() -> Unit): HttpClient
 
 /**
- * URL de l'API en desenvolupament. Canvia per plataforma perquè "localhost"
+ * URL de l'API en desenvolupament (valor per defecte; cada app passa la seva
+ * a AppContainer segons el build: vegeu androidApp/build.gradle.kts i
+ * iosApp/Configuration/Config.xcconfig). Canvia per plataforma perquè "localhost"
  * no vol dir el mateix a tot arreu: a l'emulador d'Android és l'emulador
  * mateix, i l'ordinador amfitrió és 10.0.2.2. Al simulador d'iOS, localhost
  * sí que és el Mac.
