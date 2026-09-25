@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Android bloqueja l'HTTP en clar per defecte. En desenvolupament, el backend
+  corre a http://10.0.2.2:8080 (l'ordinador amfitrió vist des de l'emulador),
+  així que permetem HTTP NOMÉS cap a aquest domini, i només en debug.
+-->
+<network-security-config>
+    <domain-config cleartextTrafficPermitted="true">
+        <domain includeSubdomains="false">10.0.2.2</domain>
+    </domain-config>
+</network-security-config>

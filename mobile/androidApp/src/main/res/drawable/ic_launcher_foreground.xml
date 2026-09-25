@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Logo CineCat: quadrat teal arrodonit amb una "C" (zona segura de 108dp). -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+    <path
+        android:fillColor="#2DD4BF"
+        android:pathData="M40,30h28a10,10 0 0 1 10,10v28a10,10 0 0 1 -10,10h-28a10,10 0 0 1 -10,-10v-28a10,10 0 0 1 10,-10z" />
+    <path
+        android:strokeColor="#06231F"
+        android:strokeWidth="6"
+        android:strokeLineCap="round"
+        android:pathData="M63,45.5a11,11 0 1 0 0,17" />
+</vector>
