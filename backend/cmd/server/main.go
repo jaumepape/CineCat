@@ -50,6 +50,10 @@ func main() {
 		}
 		maxUploadMB = n
 	}
+	// TRUST_PROXY=true quan hi ha un proxy davant (Railway): llavors la IP del
+	// visitant es llegeix de X-Forwarded-For. En local, fals: la IP és la de
+	// la connexió i ningú la pot falsificar amb una capçalera.
+	trustProxy := os.Getenv("TRUST_PROXY") == "true"
 	posterFiles := storage.PosterFiles{Dir: uploadDir}
 	if err := posterFiles.Init(); err != nil {
 		log.Fatalf("preparant UPLOAD_DIR: %v", err)
@@ -90,8 +94,18 @@ func main() {
 		MaxBytes: int64(maxUploadMB) << 20, // MB → bytes
 	}
 
+	ratings := handlers.Ratings{Movies: movieStore, Store: storage.NewRatingStore(pool)}
+	// Valoracions anònimes: fins a 5 seguides per IP i, després, 1 cada 12 s
+	// (≈ 5 per minut). Molt per sobre d'una persona real, molt per sota d'un script.
+	ratingLimiter := handlers.NewRateLimiter(12*time.Second, 5, trustProxy)
+
 	r.Get("/health", handlers.Health)
-	r.Route("/api/movies", handlers.Movies{Store: movieStore, Posters: posters}.Routes)
+	r.Route("/api/movies", func(r chi.Router) {
+		handlers.Movies{Store: movieStore, Posters: posters}.Routes(r)
+		r.Get("/{id}/ratings", ratings.List)
+		// With aplica el middleware NOMÉS a aquesta ruta.
+		r.With(ratingLimiter.Middleware).Post("/{id}/ratings", ratings.Create)
+	})
 	// Pujar (POST .../poster, JSON + multipart) i servir (GET /uploads/...,
 	// bytes) són dos endpoints diferents: el primer escriu, el segon és un
 	// fitxer estàtic públic i cacheable.

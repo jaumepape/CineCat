@@ -47,54 +47,74 @@ func scanMovie(row rowScanner, extra ...any) (models.Movie, error) {
 	return m, err
 }
 
-// List retorna el catàleg. q i genre són opcionals: una cadena buida vol dir
-// "no filtris". Tenir UNA sola consulta amb condicions opcionals és més
-// llegible que construir el SQL concatenant trossos segons els filtres.
-// Els valors van sempre com a paràmetres ($1, $2), mai enganxats al text del
-// SQL: així és impossible una injecció SQL.
-func (s *MovieStore) List(ctx context.Context, q, genre string) ([]models.Movie, error) {
+// statsColumns i statsJoin afegeixen a una consulta de movies la mitjana i el
+// nombre de valoracions, CALCULATS ara mateix a partir de la taula ratings.
+// Guardar-los a movies seria duplicar dades: caldria mantenir-los
+// sincronitzats a cada valoració nova i, si mai divergissin, no sabríem quina
+// versió és la bona.
+//
+// LEFT JOIN: una pel·lícula sense valoracions també ha de sortir. En aquest
+// cas AVG retorna NULL (→ avg_score: null) i COUNT(r.id) retorna 0.
+const (
+	statsColumns = `,
+		ROUND(AVG(r.score), 1)::float8,
+		COUNT(r.id)`
+	statsJoin = `
+		LEFT JOIN ratings r ON r.movie_id = m.id`
+)
+
+func scanMovieDetail(row rowScanner) (models.MovieDetail, error) {
+	var d models.MovieDetail
+	m, err := scanMovie(row, &d.AvgScore, &d.RatingCount)
+	d.Movie = m
+	return d, err
+}
+
+// List retorna el catàleg amb la mitjana de cada pel·lícula (la targeta del
+// catàleg la mostra). Tot en UNA consulta: un JOIN + GROUP BY, en lloc d'una
+// consulta de mitjana per a cada pel·lícula (el problema "N+1").
+//
+// Ordre alfabètic amb la col·lació ICU: entén els accents ("Òrbita" va amb
+// les O, no darrere la Z com passaria ordenant per bytes).
+//
+// q, genre i status són opcionals: una cadena buida vol dir "no filtris".
+// Tenir una sola consulta amb condicions opcionals és més llegible que
+// construir el SQL concatenant trossos segons els filtres. Els valors van
+// sempre com a paràmetres ($1, $2...), mai enganxats al text del SQL: així és
+// impossible una injecció SQL.
+func (s *MovieStore) List(ctx context.Context, q, genre, status string) ([]models.MovieDetail, error) {
 	rows, err := s.pool.Query(ctx, `
-		SELECT `+movieColumns+`
-		FROM movies m
+		SELECT `+movieColumns+statsColumns+`
+		FROM movies m`+statsJoin+`
 		WHERE ($1 = '' OR m.title ILIKE '%' || $1 || '%')
 		  AND ($2 = '' OR $2 = ANY(m.genres))
-		ORDER BY m.title`, q, genre)
+		  AND ($3 = '' OR m.status = $3)
+		GROUP BY m.id
+		ORDER BY m.title COLLATE "und-x-icu"`, q, genre, status)
 	if err != nil {
 		return nil, err
 	}
 	defer rows.Close()
 
-	movies := []models.Movie{} // mai nil: el JSON serà [] i no null
+	movies := []models.MovieDetail{} // mai nil: el JSON serà [] i no null
 	for rows.Next() {
-		m, err := scanMovie(rows)
+		d, err := scanMovieDetail(rows)
 		if err != nil {
 			return nil, err
 		}
-		movies = append(movies, m)
+		movies = append(movies, d)
 	}
 	return movies, rows.Err()
 }
 
-// Get retorna la fitxa amb la mitjana i el nombre de valoracions CALCULATS
-// ara mateix a partir de la taula ratings. Guardar-los a movies seria
-// duplicar dades: caldria mantenir-los sincronitzats a cada valoració nova i,
-// si mai divergissin, no sabríem quina versió és la bona.
-//
-// LEFT JOIN: una pel·lícula sense valoracions també ha de sortir. En aquest
-// cas AVG retorna NULL (→ avg_score: null) i COUNT(r.id) retorna 0.
+// Get retorna la fitxa d'una pel·lícula amb la mitjana i el recompte.
 func (s *MovieStore) Get(ctx context.Context, id string) (models.MovieDetail, error) {
-	var d models.MovieDetail
 	row := s.pool.QueryRow(ctx, `
-		SELECT `+movieColumns+`,
-		       ROUND(AVG(r.score), 1)::float8,
-		       COUNT(r.id)
-		FROM movies m
-		LEFT JOIN ratings r ON r.movie_id = m.id
+		SELECT `+movieColumns+statsColumns+`
+		FROM movies m`+statsJoin+`
 		WHERE m.id = $1
 		GROUP BY m.id`, id)
-	m, err := scanMovie(row, &d.AvgScore, &d.RatingCount)
-	d.Movie = m
-	return d, err
+	return scanMovieDetail(row)
 }
 
 // Create insereix una pel·lícula. RETURNING retorna la fila tal com ha quedat

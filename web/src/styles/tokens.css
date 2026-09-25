@@ -1,0 +1,60 @@
+/*
+ * Design tokens de docs/design/README.md com a variables CSS.
+ * Els components fan servir SEMPRE aquestes variables, mai hex solts:
+ * si un color canvia, canvia aquí i a tot arreu alhora.
+ */
+:root {
+  /* Superfícies */
+  --bg: #0d0e11;
+  --surface: #16181d;
+  --raised: #1d2026;
+  --no-poster: #1a1d22;
+
+  /* Vores */
+  --border-faint: rgba(255, 255, 255, 0.06);
+  --border: rgba(255, 255, 255, 0.08);
+  --border-strong: rgba(255, 255, 255, 0.12);
+  --border-ghost: rgba(255, 255, 255, 0.16);
+
+  /* Text */
+  --text: #eef0f2;
+  --text-2: #c8ccd2;
+  --text-muted: #9298a1;
+  --text-dim: #7c828b;
+  --text-faint: #5d636c;
+
+  /* Accent (teal): accions primàries, notes i estats actius */
+  --accent: #2dd4bf;
+  --on-accent: #06231f;
+  --accent-12: rgba(45, 212, 191, 0.12);
+  --accent-15: rgba(45, 212, 191, 0.15);
+  --accent-30: rgba(45, 212, 191, 0.3);
+
+  /* Error */
+  --error: #ff5252;
+  --error-text: #ff8a8a;
+  --error-bg: rgba(255, 82, 82, 0.06);
+
+  /* Tipografia */
+  --font: 'Geist', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-mono: 'Geist Mono', ui-monospace, 'SF Mono', Menlo, monospace;
+
+  /* Radis */
+  --r-card: 8px;
+  --r-control: 9px;
+  --r-panel: 12px;
+  --r-pill: 999px;
+
+  /* Ombres */
+  --shadow-card: 0 8px 20px rgba(0, 0, 0, 0.4);
+  --shadow-poster: 0 16px 40px rgba(0, 0, 0, 0.5);
+
+  /* Espaiat de pàgina: 26–32px a escriptori, 16px a mòbil */
+  --page-x: 28px;
+}
+
+@media (max-width: 640px) {
+  :root {
+    --page-x: 16px;
+  }
+}

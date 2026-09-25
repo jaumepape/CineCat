@@ -39,8 +39,9 @@ type Movie struct {
 	CreatedAt   time.Time `json:"created_at"`
 }
 
-// MovieDetail és la fitxa: la pel·lícula més dades CALCULADES a partir de
-// les valoracions. No es guarden enlloc; es calculen a cada consulta.
+// MovieDetail és la pel·lícula més dades CALCULADES a partir de les
+// valoracions (fitxa i llistat del catàleg). No es guarden enlloc; es calculen
+// a cada consulta.
 type MovieDetail struct {
 	Movie
 	AvgScore    *float64 `json:"avg_score"` // null si no hi ha cap valoració
