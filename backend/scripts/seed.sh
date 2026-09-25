@@ -6,13 +6,21 @@
 # dins de les migracions perquè les dades de prova no han d'arribar mai a
 # producció sense voler-ho.
 #
-# Ús:  API_URL=http://localhost:8080 ./scripts/seed.sh
+# Crear pel·lícules és només per a admins: cal el token d'un admin a TOKEN
+# (el retorna POST /api/auth/login).
+#
+# Ús:
+#   TOKEN=$(curl -s -X POST $API_URL/api/auth/login -H 'Content-Type: application/json' \
+#     -d '{"email":"…","password":"…"}' | sed -E 's/.*"token":"([^"]+)".*/\1/')
+#   API_URL=http://localhost:8080 TOKEN=$TOKEN ./scripts/seed.sh
 set -euo pipefail
 
 API_URL="${API_URL:-http://localhost:8080}"
+: "${TOKEN:?cal TOKEN amb el token d’un admin (veure la capçalera d’aquest script)}"
 
 post() {
   curl -sS -f -X POST "$API_URL/api/movies" \
+    -H "Authorization: Bearer $TOKEN" \
     -H 'Content-Type: application/json' -d "$1" -o /dev/null -w "%{http_code} "
   echo "$1" | sed -E 's/.*"title": *"([^"]*)".*/\1/'
 }

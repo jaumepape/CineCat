@@ -5,8 +5,11 @@ go 1.26.0
 require (
 	github.com/disintegration/imaging v1.6.2
 	github.com/go-chi/chi/v5 v5.3.2
+	github.com/golang-jwt/jwt/v5 v5.3.1
 	github.com/golang-migrate/migrate/v4 v4.20.1
 	github.com/jackc/pgx/v5 v5.11.0
+	golang.org/x/crypto v0.57.0
+	golang.org/x/term v0.46.0
 	golang.org/x/time v0.16.0
 )
 
@@ -17,5 +20,6 @@ require (
 	github.com/jackc/puddle/v2 v2.2.2 // indirect
 	golang.org/x/image v0.46.0 // indirect
 	golang.org/x/sync v0.23.0 // indirect
+	golang.org/x/sys v0.48.0 // indirect
 	golang.org/x/text v0.42.0 // indirect
 )

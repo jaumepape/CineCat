@@ -1,11 +1,13 @@
 package handlers
 
 import (
-	"encoding/json"
 	"errors"
 	"net/http"
 	"strconv"
 
+	"github.com/go-chi/chi/v5"
+
+	"github.com/jaumepape/cinecat/backend/internal/auth"
 	"github.com/jaumepape/cinecat/backend/internal/models"
 	"github.com/jaumepape/cinecat/backend/internal/storage"
 )
@@ -41,13 +43,7 @@ func (h Ratings) List(w http.ResponseWriter, r *http.Request) {
 
 	// Distingim "pel·lícula sense valoracions" (200 + []) de "pel·lícula que
 	// no existeix" (404).
-	exists, err := h.Movies.Exists(r.Context(), id)
-	if err != nil {
-		serverError(w, err)
-		return
-	}
-	if !exists {
-		writeError(w, http.StatusNotFound, "no trobat")
+	if !h.movieVisible(w, r, id) {
 		return
 	}
 
@@ -59,10 +55,27 @@ func (h Ratings) List(w http.ResponseWriter, r *http.Request) {
 	writeJSON(w, http.StatusOK, ratings)
 }
 
+// movieVisible comprova que la pel·lícula existeix i que qui demana la pot
+// veure (un esborrany només el veu l'admin). Si no, ja ha escrit el 404.
+func (h Ratings) movieVisible(w http.ResponseWriter, r *http.Request, id string) bool {
+	status, err := h.Movies.Status(r.Context(), id)
+	if errors.Is(err, storage.ErrNotFound) || (err == nil && status == models.StatusDraft && !auth.IsAdmin(r.Context())) {
+		writeError(w, http.StatusNotFound, "no trobat")
+		return false
+	}
+	if err != nil {
+		serverError(w, err)
+		return false
+	}
+	return true
+}
+
 // POST /api/movies/{id}/ratings
 //
-// Sense token → valoració anònima (user_id = NULL). A la Fase 4, si arriba un
-// token vàlid, aquí mateix s'omplirà userID: MATEIX endpoint, MATEIXA taula.
+// MATEIX endpoint i MATEIXA taula per a anònims i registrats. L'única
+// diferència és si el middleware Authenticate ha posat un usuari al context:
+//   - sense token → user_id = NULL (anònima; author_label opcional)
+//   - amb token   → user_id = l'usuari (l'author_label s'ignora: ja té àlies)
 func (h Ratings) Create(w http.ResponseWriter, r *http.Request) {
 	id, ok := movieID(w, r)
 	if !ok {
@@ -70,11 +83,7 @@ func (h Ratings) Create(w http.ResponseWriter, r *http.Request) {
 	}
 
 	var in models.RatingInput
-	r.Body = http.MaxBytesReader(w, r.Body, 64<<10)
-	dec := json.NewDecoder(r.Body)
-	dec.DisallowUnknownFields()
-	if err := dec.Decode(&in); err != nil {
-		writeError(w, http.StatusBadRequest, "JSON invàlid: "+err.Error())
+	if !decodeJSON(w, r, &in) {
 		return
 	}
 	in.Normalize()
@@ -82,9 +91,58 @@ func (h Ratings) Create(w http.ResponseWriter, r *http.Request) {
 		writeError(w, http.StatusBadRequest, err.Error())
 		return
 	}
+	if !h.movieVisible(w, r, id) {
+		return
+	}
 
-	var userID *string // anònim; la Fase 4 l'omplirà a partir del token
+	var userID *string
+	if u := auth.FromContext(r.Context()); u != nil {
+		userID = &u.ID
+		in.AuthorLabel = nil
+	}
 	rating, err := h.Store.Create(r.Context(), id, userID, in)
+	switch {
+	case errors.Is(err, storage.ErrNotFound):
+		writeError(w, http.StatusNotFound, "no trobat")
+	case errors.Is(err, storage.ErrAlreadyRated):
+		writeError(w, http.StatusConflict, err.Error())
+	case err != nil:
+		serverError(w, err)
+	default:
+		writeJSON(w, http.StatusCreated, rating)
+	}
+}
+
+// PUT /api/ratings/{id}  {score, comment?}
+//
+// Només l'autor pot editar la seva valoració:
+//   - anònim (sense token)       → 401
+//   - valoració d'un altre       → 403
+//   - valoració anònima          → 403 (no té autor: ningú no la pot reclamar)
+func (h Ratings) Update(w http.ResponseWriter, r *http.Request) {
+	u := auth.FromContext(r.Context())
+	if u == nil {
+		writeError(w, http.StatusUnauthorized, "no autenticat")
+		return
+	}
+	id := chi.URLParam(r, "id")
+	if !uuidRe.MatchString(id) {
+		writeError(w, http.StatusNotFound, "no trobat")
+		return
+	}
+
+	var body models.RatingUpdateInput
+	if !decodeJSON(w, r, &body) {
+		return
+	}
+	in := body.AsInput()
+	in.Normalize()
+	if err := in.Validate(); err != nil {
+		writeError(w, http.StatusBadRequest, err.Error())
+		return
+	}
+
+	current, err := h.Store.Get(r.Context(), id)
 	if errors.Is(err, storage.ErrNotFound) {
 		writeError(w, http.StatusNotFound, "no trobat")
 		return
@@ -93,5 +151,19 @@ func (h Ratings) Create(w http.ResponseWriter, r *http.Request) {
 		serverError(w, err)
 		return
 	}
-	writeJSON(w, http.StatusCreated, rating)
+	if current.UserID == nil || *current.UserID != u.ID {
+		writeError(w, http.StatusForbidden, "només pots editar les teves valoracions")
+		return
+	}
+
+	rating, err := h.Store.Update(r.Context(), id, in)
+	if errors.Is(err, storage.ErrNotFound) {
+		writeError(w, http.StatusNotFound, "no trobat")
+		return
+	}
+	if err != nil {
+		serverError(w, err)
+		return
+	}
+	writeJSON(w, http.StatusOK, rating)
 }
