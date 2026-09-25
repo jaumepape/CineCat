@@ -8,7 +8,7 @@
 #    compilador ni el codi font.
 
 # --- Etapa 1: build ---------------------------------------------------------
-FROM golang:1.25-alpine AS build
+FROM golang:1.26-alpine AS build
 WORKDIR /src
 
 # Copiem primer go.mod i go.sum i descarreguem dependències

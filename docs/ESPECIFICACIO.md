@@ -277,7 +277,7 @@ El navegador envia `POST` amb `Content-Type: multipart/form-data` i un part `fil
 3. Go valida token → role=admin → INSERT movies (poster_path=NULL) → {id:"a1b2", poster_url:null}.
 4. Vue, amb l'id, envia el fitxer: POST /api/movies/a1b2/poster (multipart, "file").
 5. Go:
-     a. comprova mida (≤2MB) i tipus real (JPG/PNG) → si no, 413/415.
+     a. comprova mida (≤5MB) i tipus real (JPG/PNG) → si no, 413/415.
      b. redimensiona a ~500px d'amplada.
      c. genera nom "a1b2.jpg".
      d. desa bytes a /uploads/posters/a1b2.jpg (volum persistent).

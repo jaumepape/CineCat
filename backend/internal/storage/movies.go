@@ -121,6 +121,25 @@ func (s *MovieStore) Update(ctx context.Context, id string, in models.MovieInput
 	return scanMovie(row)
 }
 
+// SetPosterPath apunta la pel·lícula al seu fitxer de pòster.
+func (s *MovieStore) SetPosterPath(ctx context.Context, id, path string) error {
+	tag, err := s.pool.Exec(ctx, `UPDATE movies SET poster_path = $2 WHERE id = $1`, id, path)
+	if err != nil {
+		return err
+	}
+	if tag.RowsAffected() == 0 {
+		return ErrNotFound
+	}
+	return nil
+}
+
+// Exists diu si hi ha una pel·lícula amb aquest id.
+func (s *MovieStore) Exists(ctx context.Context, id string) (bool, error) {
+	var exists bool
+	err := s.pool.QueryRow(ctx, `SELECT EXISTS (SELECT 1 FROM movies WHERE id = $1)`, id).Scan(&exists)
+	return exists, err
+}
+
 // Delete esborra la pel·lícula (i, per ON DELETE CASCADE, les seves valoracions).
 func (s *MovieStore) Delete(ctx context.Context, id string) error {
 	tag, err := s.pool.Exec(ctx, `DELETE FROM movies WHERE id = $1`, id)

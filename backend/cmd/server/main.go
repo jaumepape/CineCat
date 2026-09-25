@@ -10,6 +10,7 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"strconv"
 	"time"
 
 	"github.com/go-chi/chi/v5"
@@ -31,6 +32,27 @@ func main() {
 	databaseURL := os.Getenv("DATABASE_URL")
 	if databaseURL == "" {
 		log.Fatal("falta la variable d'entorn DATABASE_URL")
+	}
+
+	// UPLOAD_DIR: on es desen els pòsters. En local, "uploads" (relatiu a on
+	// s'executa: backend/uploads amb `go run`); a Railway, el volum persistent
+	// muntat a /app/uploads. El disc d'un contenidor s'esborra a cada deploy;
+	// el volum no.
+	uploadDir := os.Getenv("UPLOAD_DIR")
+	if uploadDir == "" {
+		uploadDir = "uploads"
+	}
+	maxUploadMB := 5
+	if v := os.Getenv("MAX_UPLOAD_MB"); v != "" {
+		n, err := strconv.Atoi(v)
+		if err != nil || n <= 0 {
+			log.Fatalf("MAX_UPLOAD_MB ha de ser un enter positiu, no %q", v)
+		}
+		maxUploadMB = n
+	}
+	posterFiles := storage.PosterFiles{Dir: uploadDir}
+	if err := posterFiles.Init(); err != nil {
+		log.Fatalf("preparant UPLOAD_DIR: %v", err)
 	}
 
 	// Si la BD no respon en 10 s a l'arrencada, és millor fallar de seguida
@@ -57,12 +79,26 @@ func main() {
 	// handler retorna 500 en lloc de tombar tot el servidor).
 	r.Use(middleware.Logger)
 	r.Use(middleware.Recoverer)
+	// HEAD (només capçaleres) respon com el GET corresponent, sense cos. Ho fan
+	// servir navegadors i eines per mirar mida o data d'un fitxer sense baixar-lo.
+	r.Use(middleware.GetHead)
+
+	movieStore := storage.NewMovieStore(pool)
+	posters := handlers.Posters{
+		Store:    movieStore,
+		Files:    posterFiles,
+		MaxBytes: int64(maxUploadMB) << 20, // MB → bytes
+	}
 
 	r.Get("/health", handlers.Health)
-	r.Route("/api/movies", handlers.Movies{Store: storage.NewMovieStore(pool)}.Routes)
+	r.Route("/api/movies", handlers.Movies{Store: movieStore, Posters: posters}.Routes)
+	// Pujar (POST .../poster, JSON + multipart) i servir (GET /uploads/...,
+	// bytes) són dos endpoints diferents: el primer escriu, el segon és un
+	// fitxer estàtic públic i cacheable.
+	r.Get("/uploads/posters/{file}", posters.Serve)
 
 	addr := ":" + port
-	log.Printf("CineCat backend escoltant a %s", addr)
+	log.Printf("CineCat backend escoltant a %s (UPLOAD_DIR=%s, MAX_UPLOAD_MB=%d)", addr, uploadDir, maxUploadMB)
 	if err := http.ListenAndServe(addr, r); err != nil {
 		log.Fatalf("el servidor s'ha aturat: %v", err)
 	}

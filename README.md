@@ -14,16 +14,18 @@ cinecat/
 └── docs/      ← disseny i pla d'implementació
 ```
 
-## Estat actual — Fase 1
+## Estat actual — Fase 2
 
-El backend té la **base de dades** (3 taules: `users`, `movies`, `ratings`) i l'**API del catàleg**: CRUD de pel·lícules a `/api/movies`, amb la fitxa calculant `avg_score` i `rating_count` per SQL. Encara **no hi ha imatges ni auth** (els endpoints d'escriptura queden oberts fins a la Fase 4).
+El backend té la **base de dades** (3 taules: `users`, `movies`, `ratings`), l'**API del catàleg** (CRUD a `/api/movies`, amb `avg_score` i `rating_count` calculats per SQL) i els **pòsters**: es pugen a `POST /api/movies/{id}/poster`, es desen redimensionats al disc (`UPLOAD_DIR`) i se serveixen a `/uploads/posters/<id>.jpg`. Encara **no hi ha auth** (els endpoints d'escriptura queden oberts fins a la Fase 4).
 
 ## Arrencar el backend en local
 
-El servidor necessita dues variables d'entorn:
+Variables d'entorn:
 
 - `DATABASE_URL` (obligatòria): cadena de connexió a PostgreSQL.
 - `PORT` (opcional, per defecte `8080`).
+- `UPLOAD_DIR` (opcional, per defecte `uploads`, relatiu a on s'executa: `backend/uploads` amb `go run`). Carpeta on es desen els pòsters; es crea sola.
+- `MAX_UPLOAD_MB` (opcional, per defecte `5`). Mida màxima d'un pòster.
 
 En arrencar, **aplica automàticament les migracions** pendents de `backend/migrations/`.
 
@@ -62,8 +64,26 @@ curl 'http://localhost:8080/api/movies?genre=Drama'
 curl 'http://localhost:8080/api/movies?q=nits'
 ```
 
+### 4. Pujar un pòster
+
+```bash
+curl -F "file=@poster.jpg" http://localhost:8080/api/movies/<id>/poster
+# {"poster_url":"/uploads/posters/<id>.jpg"}  → obre http://localhost:8080/uploads/posters/<id>.jpg
+```
+
+Només s'accepten JPG i PNG (comprovats pel contingut, no per l'extensió → `415`) de fins a `MAX_UPLOAD_MB` (→ `413`). El servidor el redimensiona a 500px d'amplada com a màxim i el desa sempre com a JPEG.
+
 ## Desplegament a Railway
 
 El backend es desplega a Railway des de la CLI amb el seu `Dockerfile`. La configuració del build i el healthcheck (`/health`) viuen a [`backend/railway.json`](backend/railway.json). El detall de les ordres usades es documenta a la descripció del PR de cada fase.
 
-Variables d'entorn rellevants per fase: a la **Fase 1** calen `PORT` (que Railway injecta) i `DATABASE_URL` (referenciada al plugin Postgres: `${{Postgres.DATABASE_URL}}`). Més endavant: `JWT_SECRET`, `UPLOAD_DIR`, `MAX_UPLOAD_MB` (veure [ESPECIFICACIO.md §9](docs/ESPECIFICACIO.md#9-pla-de-desplegament-a-railway)).
+Variables d'entorn a Railway: `PORT` (la injecta Railway), `DATABASE_URL` (referenciada al plugin Postgres: `${{Postgres.DATABASE_URL}}`) i `UPLOAD_DIR=/app/uploads`. Més endavant: `JWT_SECRET` (veure [ESPECIFICACIO.md §9](docs/ESPECIFICACIO.md#9-pla-de-desplegament-a-railway)).
+
+### Volum per als pòsters
+
+El disc d'un contenidor **s'esborra a cada desplegament**. Perquè els pòsters sobrevisquin, el servei `backend` necessita un **volum persistent** muntat a `/app/uploads` (el `WORKDIR` de la imatge és `/app`):
+
+```bash
+railway volume --service backend add --mount-path /app/uploads
+railway variables --service backend --set UPLOAD_DIR=/app/uploads
+```
