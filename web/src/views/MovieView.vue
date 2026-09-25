@@ -6,6 +6,7 @@ import { getMovie } from '../api/movies.js'
 import { listRatings, RATINGS_PAGE_SIZE } from '../api/ratings.js'
 import RatingForm from '../components/RatingForm.vue'
 import RatingItem from '../components/RatingItem.vue'
+import { useAuthStore } from '../stores/auth.js'
 import { useCatalogStore } from '../stores/catalog.js'
 import { formatDuration, formatRatingCount, formatScore } from '../utils/format.js'
 
@@ -14,6 +15,7 @@ const props = defineProps({
 })
 
 const catalog = useCatalogStore()
+const auth = useAuthStore()
 
 const movie = ref(null)
 const status = ref('loading') // 'loading' | 'loaded' | 'notfound' | 'error'
@@ -65,10 +67,19 @@ async function loadMore() {
   }
 }
 
-// Després de valorar: tornem a demanar la fitxa (la mitjana i el recompte
-// els CALCULA l'API a partir de la taula ratings; el web no els calcula mai)
-// i la primera pàgina de valoracions, on ja hi ha la nova.
-async function onRatingCreated() {
+// La valoració registrada de l'usuari amb sessió, si és a les pàgines
+// carregades (les més recents primer: la pròpia sol ser a la primera).
+// Si en té una però no s'ha carregat, l'API respondrà 409 en intentar-ne
+// crear una altra i el formulari ho explicarà.
+const ownRating = computed(() => {
+  if (!auth.user) return null
+  return ratings.value.find((r) => r.user_id === auth.user.id) ?? null
+})
+
+// Després de valorar o editar: tornem a demanar la fitxa (la mitjana i el
+// recompte els CALCULA l'API a partir de la taula ratings; el web no els
+// calcula mai) i la primera pàgina de valoracions, on ja hi ha la nova.
+async function onRatingSaved() {
   catalog.invalidate() // les mitjanes del catàleg també han canviat
   await Promise.all([loadMovie(), loadFirstRatings()])
 }
@@ -89,6 +100,10 @@ function scrollToForm() {
 
 <template>
   <div class="page detail">
+    <p v-if="status === 'loaded' && movie.status === 'draft'" class="draft-note">
+      Esborrany: només la veus perquè ets admin.
+      <RouterLink :to="`/admin/pelicules/${movie.id}`">Edita-la</RouterLink>
+    </p>
     <div v-if="status === 'loading'" class="hero" aria-busy="true">
       <div class="skeleton poster-skel"></div>
       <div class="info">
@@ -169,7 +184,7 @@ function scrollToForm() {
         </div>
 
         <div id="valorar">
-          <RatingForm :movie-id="movie.id" @created="onRatingCreated" />
+          <RatingForm :movie-id="movie.id" :own-rating="ownRating" @saved="onRatingSaved" />
         </div>
 
         <!-- 02b · Sense valoracions -->
@@ -179,7 +194,7 @@ function scrollToForm() {
         </div>
 
         <div v-else class="list">
-          <RatingItem v-for="r in ratings" :key="r.id" :rating="r" />
+          <RatingItem v-for="r in ratings" :key="r.id" :rating="r" :own="r.id === ownRating?.id" @edit="scrollToForm" />
           <button v-if="hasMore" class="btn btn-ghost more" type="button" :disabled="loadingMore" @click="loadMore">
             {{ loadingMore ? 'Carregant…' : 'Carrega’n més' }}
           </button>
@@ -193,6 +208,19 @@ function scrollToForm() {
 .detail {
   padding-top: 20px;
   padding-bottom: 80px;
+}
+.draft-note {
+  margin: 0 0 16px;
+  padding: 10px 14px;
+  border-radius: var(--r-control);
+  background: var(--raised);
+  border: 1px dashed rgba(255, 255, 255, 0.2);
+  color: var(--text-muted);
+  font-size: 13px;
+}
+.draft-note a {
+  color: var(--accent);
+  margin-left: 6px;
 }
 .breadcrumb {
   display: flex;

@@ -1,6 +1,19 @@
 <script setup>
-// Capçalera fixa de 62px. "Novetats", "Top valorades" i "Inicia sessió" són
-// al disseny però fora d'aquesta fase: es mostren desactivats.
+// Capçalera fixa de 62px. Sense sessió: "Inicia sessió". Amb sessió: xip amb
+// l'àlies i "Surt"; si és admin, badge ADMIN i enllaç a la gestió.
+// "Novetats" i "Top valorades" són al disseny però fora de l'MVP.
+import { useRoute, useRouter } from 'vue-router'
+import { useAuthStore } from '../stores/auth.js'
+
+const auth = useAuthStore()
+const route = useRoute()
+const router = useRouter()
+
+function logout() {
+  auth.logout()
+  // Si era en una pàgina d'admin, ja no hi pot ser.
+  if (route.meta.requiresAdmin) router.push({ name: 'catalog' })
+}
 </script>
 
 <template>
@@ -10,16 +23,27 @@
         <span class="logo-mark" aria-hidden="true">C</span>
         <span class="logo-word">Cine<span class="accent">Cat</span></span>
       </RouterLink>
+      <span v-if="auth.isAdmin" class="admin-badge mono">ADMIN</span>
 
       <nav class="nav" aria-label="Principal">
         <RouterLink to="/" class="nav-item" active-class="" exact-active-class="active">Catàleg</RouterLink>
+        <RouterLink v-if="auth.isAdmin" to="/admin" class="nav-item" active-class="active">Gestió</RouterLink>
         <span class="nav-item disabled" aria-disabled="true" title="Properament">Novetats</span>
         <span class="nav-item disabled" aria-disabled="true" title="Properament">Top valorades</span>
       </nav>
 
-      <button class="btn btn-ghost login" type="button" disabled title="Arriba a la Fase 4">
-        Inicia sessió
-      </button>
+      <div class="session">
+        <template v-if="auth.isLoggedIn">
+          <span class="user-chip" :title="auth.user.email">
+            <span class="avatar" aria-hidden="true">{{ auth.user.alias.charAt(0).toUpperCase() }}</span>
+            <span class="alias">@{{ auth.user.alias }}</span>
+          </span>
+          <button class="btn btn-ghost small" type="button" @click="logout">Surt</button>
+        </template>
+        <RouterLink v-else :to="{ name: 'login', query: route.name === 'login' ? undefined : { redirect: route.fullPath } }" class="btn btn-ghost small">
+          Inicia sessió
+        </RouterLink>
+      </div>
     </div>
   </header>
 </template>
@@ -61,6 +85,17 @@
 .accent {
   color: var(--accent);
 }
+.admin-badge {
+  margin-left: -16px;
+  padding: 3px 8px;
+  border-radius: 6px;
+  background: var(--accent-15);
+  border: 1px solid var(--accent-30);
+  color: var(--accent);
+  font-size: 10.5px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+}
 .nav {
   display: flex;
   gap: 4px;
@@ -80,17 +115,66 @@
   cursor: default;
   opacity: 0.7;
 }
-.login {
+.session {
   margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.small {
   padding: 8px 14px;
   font-size: 13px;
 }
-@media (max-width: 720px) {
+.user-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 4px 12px 4px 4px;
+  border-radius: var(--r-pill);
+  background: var(--raised);
+  border: 1px solid var(--border);
+  font-size: 13px;
+  font-weight: 500;
+  max-width: 180px;
+}
+.avatar {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: var(--accent-15);
+  color: var(--accent);
+  font-weight: 600;
+  font-size: 12px;
+}
+.alias {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+@media (max-width: 860px) {
   .nav-item.disabled {
     display: none;
   }
+}
+@media (max-width: 560px) {
   .header-inner {
-    gap: 14px;
+    gap: 8px;
+  }
+  .nav-item {
+    padding: 7px 8px;
+  }
+  .logo-word,
+  .alias {
+    display: none;
+  }
+  .admin-badge {
+    margin-left: -6px;
+  }
+  .user-chip {
+    padding-right: 4px;
   }
 }
 </style>

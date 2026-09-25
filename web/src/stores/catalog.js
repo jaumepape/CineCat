@@ -35,7 +35,9 @@ export const useCatalogStore = defineStore('catalog', () => {
     if (status.value !== 'loaded') status.value = 'loading'
     error.value = null
     try {
-      movies.value = await listMovies({ q, genre }, { signal: controller.signal })
+      // El catàleg públic mostra només les publicades, també a l'admin (els
+      // esborranys els gestiona a /admin).
+      movies.value = await listMovies({ q, genre, status: 'published' }, { signal: controller.signal })
       loadedKey.value = key
       status.value = 'loaded'
     } catch (err) {
