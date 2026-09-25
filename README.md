@@ -10,14 +10,15 @@ Catàleg de pel·lícules amb valoracions del públic, **web (Vue 3) + mòbil (K
 cinecat/
 ├── backend/   ← API Go
 ├── web/       ← frontend Vue 3 (web públic)
-├── mobile/    ← client KMP        (placeholder, Fase 5)
+├── mobile/    ← client mòbil Kotlin Multiplatform (Android + iOS)
 └── docs/      ← disseny i pla d'implementació
 ```
 
-## Estat actual — Fase 4
+## Estat actual — Fase 5
 
 - **Backend:** base de dades (`users`, `movies`, `ratings`), CRUD del catàleg a `/api/movies` (amb `avg_score` i `rating_count` calculats per SQL), pòsters (`POST /api/movies/{id}/poster` → `/uploads/posters/<id>.jpg`) i **valoracions anònimes** (`GET`/`POST /api/movies/{id}/ratings`, amb límit de peticions per IP).
 - **Web** (`web/`): catàleg amb cerca i filtre per gènere, fitxa amb pòster, mitjana i valoracions (anònimes o amb l'àlies, editables), inici de sessió i registre, i àrea d'administració (`/admin`) per crear i editar pel·lícules amb el seu pòster.
+- **Mòbil** (`mobile/`, Kotlin Multiplatform + Compose Multiplatform): catàleg, fitxa i valoració (anònima o amb àlies) a Android i iOS, contra la mateixa API. Instruccions a [`mobile/README.md`](mobile/README.md).
 - **Auth** amb JWT: registre i login (`/api/auth/*`), tres casos (anònim / `user` / `admin`). Crear, editar, esborrar pel·lícules i pujar pòsters és només per a `admin`; els esborranys només els veu l'admin. Els usuaris registrats valoren amb el seu àlies i poden editar la seva valoració.
 
 ## Arrencar el backend en local

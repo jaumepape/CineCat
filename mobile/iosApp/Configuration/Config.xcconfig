@@ -1,0 +1,5 @@
+// Configuració de l'app iOS. TEAM_ID només cal per instal·lar en un iPhone
+// real (el simulador no en necessita). No el posis al repo si és personal.
+TEAM_ID=
+BUNDLE_ID=cat.cinecat.app
+APP_NAME=CineCat

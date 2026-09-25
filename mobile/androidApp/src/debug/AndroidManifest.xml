@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Només a la variant DEBUG: permet HTTP en clar cap al backend local
+  (vegeu res/xml/network_security_config.xml). La variant release no porta
+  aquest fitxer i, per tant, només accepta HTTPS.
+-->
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+    <application android:networkSecurityConfig="@xml/network_security_config" />
+</manifest>
