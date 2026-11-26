@@ -60,7 +60,7 @@ func main() {
 		maxUploadMB = n
 	}
 	// TRUST_PROXY=true quan hi ha un proxy davant (Railway): llavors la IP del
-	// visitant es llegeix de X-Forwarded-For. En local, fals: la IP és la de
+	// visitant es llegeix de X-Real-IP. En local, fals: la IP és la de
 	// la connexió i ningú la pot falsificar amb una capçalera.
 	trustProxy := os.Getenv("TRUST_PROXY") == "true"
 	posterFiles := storage.PosterFiles{Dir: uploadDir}

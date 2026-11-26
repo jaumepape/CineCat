@@ -30,7 +30,7 @@ Variables d'entorn:
 - `PORT` (opcional, per defecte `8080`).
 - `UPLOAD_DIR` (opcional, per defecte `uploads`, relatiu a on s'executa: `backend/uploads` amb `go run`). Carpeta on es desen els pòsters; es crea sola.
 - `MAX_UPLOAD_MB` (opcional, per defecte `5`). Mida màxima d'un pòster.
-- `TRUST_PROXY` (opcional, per defecte fals). Posa-la a `true` només si hi ha un proxy davant (Railway): llavors la IP del visitant, per al límit de valoracions, es llegeix de `X-Forwarded-For`.
+- `TRUST_PROXY` (opcional, per defecte fals). Posa-la a `true` només si hi ha un proxy davant (Railway): llavors la IP del visitant, per al límit de valoracions, es llegeix de `X-Real-IP`, que Railway escriu (i sobreescriu: no es pot falsificar).
 
 En arrencar, **aplica automàticament les migracions** pendents de `backend/migrations/`.
 
