@@ -34,7 +34,13 @@ data class RateState(
     val anonymous: Boolean = true,
     val sending: Boolean = false,
     val error: String? = null,
-)
+    // La valoració registrada de l'usuari a aquesta pel·lícula, si en té.
+    // Amb "@àlies" triat, el full EDITA aquesta valoració (PUT) en lloc de
+    // crear-ne una de nova: l'API només en permet una per usuari (409).
+    val own: Rating? = null,
+) {
+    val editing: Boolean get() = own != null && !anonymous
+}
 
 class MovieViewModel(private val api: CineCatApi, private val movieId: String) : ViewModel() {
     private val _state = MutableStateFlow(MovieState())
@@ -87,13 +93,35 @@ class MovieViewModel(private val api: CineCatApi, private val movieId: String) :
 
     // --- Formulari de valoració ---
 
-    /** En obrir el full: amb sessió, per defecte es publica amb l'àlies. */
-    fun startRating(loggedIn: Boolean) = _rate.update { RateState(anonymous = !loggedIn) }
+    /**
+     * En obrir el full:
+     *  - sense sessió          → valoració anònima, buida;
+     *  - amb sessió            → per defecte es publica amb l'àlies;
+     *  - ja té una valoració   → mode edició, amb la nota i el text que hi tenia.
+     */
+    fun startRating(loggedIn: Boolean, own: Rating?) = _rate.update {
+        if (own != null) {
+            RateState(score = own.score, comment = own.comment.orEmpty(), anonymous = false, own = own)
+        } else {
+            RateState(anonymous = !loggedIn)
+        }
+    }
 
     fun setScore(score: Int) = _rate.update { it.copy(score = score, error = null) }
     fun setComment(comment: String) = _rate.update { it.copy(comment = comment) }
     fun setAuthorLabel(label: String) = _rate.update { it.copy(authorLabel = label) }
-    fun setAnonymous(anonymous: Boolean) = _rate.update { it.copy(anonymous = anonymous) }
+    /**
+     * Canviar entre "Anònim" i "@àlies". Si té valoració pròpia, "Anònim" vol
+     * dir escriure'n una de NOVA (buida) i "@àlies" torna a editar la seva.
+     */
+    fun setAnonymous(anonymous: Boolean) = _rate.update {
+        val own = it.own
+        when {
+            own == null -> it.copy(anonymous = anonymous)
+            anonymous -> it.copy(anonymous = true, score = null, comment = "", error = null)
+            else -> it.copy(anonymous = false, score = own.score, comment = own.comment.orEmpty(), error = null)
+        }
+    }
 
     /**
      * Envia la valoració. Retorna true si ha anat bé (el full es tanca). La
@@ -108,7 +136,11 @@ class MovieViewModel(private val api: CineCatApi, private val movieId: String) :
         }
         _rate.update { it.copy(sending = true, error = null) }
         return try {
-            api.createRating(movieId, r.score, r.comment, r.authorLabel, r.anonymous)
+            if (r.editing) {
+                api.updateRating(r.own!!.id, r.score, r.comment)
+            } else {
+                api.createRating(movieId, r.score, r.comment, r.authorLabel, r.anonymous)
+            }
             reload()
             _rate.value = RateState()
             true

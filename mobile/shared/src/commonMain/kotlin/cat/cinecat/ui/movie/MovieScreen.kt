@@ -74,6 +74,14 @@ fun MovieScreen(
     val state by viewModel.state.collectAsStateWithLifecycle()
     var sheetOpen by remember { mutableStateOf(false) }
     val movie = state.movie
+    // La valoració registrada de l'usuari, si és a les pàgines carregades (les
+    // més recents primer: la pròpia sol ser a la primera). Si en té una que no
+    // s'ha carregat, l'API respondrà 409 en crear-ne una altra i el full ho dirà.
+    val ownRating = session?.let { s -> state.ratings.firstOrNull { it.userId == s.user.id } }
+    fun openSheet() {
+        viewModel.startRating(loggedIn = session != null, own = ownRating)
+        sheetOpen = true
+    }
 
     Box(Modifier.fillMaxSize().background(CineColors.Bg)) {
         when {
@@ -141,7 +149,7 @@ fun MovieScreen(
                         }
                     } else {
                         items(state.ratings, key = { it.id }) { rating ->
-                            RatingItem(rating, own = session != null && rating.userId == session.user.id)
+                            RatingItem(rating, own = rating.id == ownRating?.id, onEdit = { openSheet() })
                         }
                         if (state.hasMore) {
                             item {
@@ -163,11 +171,8 @@ fun MovieScreen(
                         .padding(start = 16.dp, end = 16.dp, top = 24.dp, bottom = 12.dp),
                 ) {
                     PrimaryButton(
-                        "Valora aquesta pel·lícula",
-                        onClick = {
-                            viewModel.startRating(loggedIn = session != null)
-                            sheetOpen = true
-                        },
+                        if (ownRating != null) "Edita la teva valoració" else "Valora aquesta pel·lícula",
+                        onClick = { openSheet() },
                         modifier = Modifier.fillMaxWidth(),
                     )
                 }
@@ -228,7 +233,7 @@ private fun ScoreBlock(avg: Double?, count: Int) {
  * Mai l'email: l'API ni tan sols l'envia.
  */
 @Composable
-private fun RatingItem(rating: Rating, own: Boolean) {
+private fun RatingItem(rating: Rating, own: Boolean, onEdit: () -> Unit) {
     val registered = rating.userAlias != null
     val name = rating.userAlias?.let { "@$it" } ?: rating.authorLabel ?: "Anònim"
     val anonymous = !registered && rating.authorLabel == null
@@ -263,6 +268,18 @@ private fun RatingItem(rating: Rating, own: Boolean) {
                 rating.comment?.let {
                     Spacer(Modifier.height(6.dp))
                     Text(it, color = CineColors.Text2, fontSize = 14.sp, lineHeight = 21.sp)
+                }
+                if (own) {
+                    Text(
+                        "Edita la teva valoració",
+                        color = CineColors.Accent,
+                        fontSize = 13.sp,
+                        fontWeight = FontWeight.Medium,
+                        modifier = Modifier
+                            .padding(top = 4.dp)
+                            .clickable(role = Role.Button, onClick = onEdit)
+                            .padding(vertical = 6.dp),
+                    )
                 }
             }
         }
