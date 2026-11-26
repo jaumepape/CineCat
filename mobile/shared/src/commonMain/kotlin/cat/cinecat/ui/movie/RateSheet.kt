@@ -44,6 +44,7 @@ import kotlinx.coroutines.launch
  *
  * "Publica com a" Anònim / @àlies: és el MATEIX endpoint en els dos casos;
  * l'única diferència és si la petició porta el token (vegeu CineCatApi).
+ * Si l'usuari ja té una valoració, "@àlies" l'edita (PUT /api/ratings/{id}).
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -79,7 +80,7 @@ fun RateSheet(
                 Poster(posterUrl, movie.title, Modifier.width(44.dp), radius = 6.dp, overlay = false)
                 Spacer(Modifier.width(12.dp))
                 Column {
-                    Text("VALORES", fontFamily = CineFonts.mono, fontSize = 10.5.sp, letterSpacing = 1.5.sp, color = CineColors.TextFaint)
+                    Text(if (rate.editing) "LA TEVA VALORACIÓ" else "VALORES", fontFamily = CineFonts.mono, fontSize = 10.5.sp, letterSpacing = 1.5.sp, color = CineColors.TextFaint)
                     Text(movie.title, fontWeight = FontWeight.SemiBold, fontSize = 16.sp, color = CineColors.Text)
                     Text(movie.year.toString(), fontFamily = CineFonts.mono, fontSize = 12.sp, color = CineColors.TextMuted)
                 }
@@ -130,7 +131,11 @@ fun RateSheet(
             rate.error?.let { ErrorBox(it) }
 
             PrimaryButton(
-                if (rate.sending) "Enviant…" else "Envia la valoració",
+                when {
+                    rate.sending -> "Enviant…"
+                    rate.editing -> "Desa els canvis"
+                    else -> "Envia la valoració"
+                },
                 enabled = !rate.sending,
                 onClick = {
                     scope.launch {
@@ -143,7 +148,12 @@ fun RateSheet(
                 modifier = Modifier.fillMaxWidth(),
             )
             Text(
-                if (rate.anonymous) "Pots valorar sense iniciar sessió." else "Es publicarà amb el teu àlies.",
+                when {
+                    rate.editing -> "Pots canviar la nota i el text sempre que vulguis."
+                    rate.anonymous && rate.own != null -> "Es publicarà com una valoració nova, anònima."
+                    rate.anonymous -> "Pots valorar sense iniciar sessió."
+                    else -> "Es publicarà amb el teu àlies."
+                },
                 fontSize = 12.5.sp,
                 color = CineColors.TextDim,
                 modifier = Modifier.align(Alignment.CenterHorizontally),

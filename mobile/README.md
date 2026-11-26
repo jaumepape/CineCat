@@ -1,6 +1,6 @@
 # mobile/ — Client Kotlin Multiplatform (Android + iOS)
 
-App mòbil de CineCat: catàleg, fitxa i valoració (anònima o amb àlies). Consumeix **exactament la mateixa API** que el web (`docs/ESPECIFICACIO.md` §4). No té res d'admin (§8).
+App mòbil de CineCat: catàleg, fitxa i valoració (anònima o amb àlies; la pròpia es pot editar). Consumeix **exactament la mateixa API** que el web (`docs/ESPECIFICACIO.md` §4). No té res d'admin (§8).
 
 ## Què es comparteix i què és natiu
 
