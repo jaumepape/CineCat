@@ -122,6 +122,8 @@ Vite reenvia `/api` i `/uploads` al backend (proxy a `web/vite.config.js`), aix�
 
 ## Desplegament a Railway
 
+**En producció:** <https://backend-production-c8ff2dcf.up.railway.app> (web, API a `/api` i pòsters a `/uploads`). Projecte `CineCat` del workspace *vdatanet's Projects*: serveis `backend` (amb el volum `backend-volume` a `/app/uploads`) i `Postgres`.
+
 Un sol servei (`backend`) amb la imatge del [`Dockerfile`](Dockerfile) de l'arrel: l'API Go serveix també el web (§9, Opció A), i els pòsters viuen en un volum. La configuració del build i el healthcheck (`/health`) són a [`railway.json`](railway.json). Es desplega des de l'**arrel** del repo:
 
 ```bash
@@ -137,7 +139,8 @@ Variables d'entorn a Railway: `PORT` (la injecta Railway), `DATABASE_URL` (refer
 El disc d'un contenidor **s'esborra a cada desplegament**. Perquè els pòsters sobrevisquin, el servei `backend` necessita un **volum persistent** muntat a `/app/uploads` (el `WORKDIR` de la imatge és `/app`):
 
 ```bash
-railway volume --service backend add --mount-path /app/uploads
+railway service backend            # enllaça el directori al servei
+railway volume add --mount-path /app/uploads
 railway variables --service backend --set UPLOAD_DIR=/app/uploads
 ```
 
