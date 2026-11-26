@@ -1,0 +1,17 @@
+# El context de build és tot el repo, però la imatge només necessita web/ i
+# backend/. Tot el que és aquí no s'envia a Docker: builds més ràpids i cap
+# fitxer local (secrets, dependències, builds) acaba a la imatge per error.
+.git
+.github
+.claude
+docs
+mobile
+**/node_modules
+**/dist
+**/.DS_Store
+**/*.log
+.env
+.env.*
+backend/uploads
+backend/tmp
+backend/bin

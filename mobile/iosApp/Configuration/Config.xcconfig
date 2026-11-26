@@ -3,3 +3,12 @@
 TEAM_ID=
 BUNDLE_ID=cat.cinecat.app
 APP_NAME=CineCat
+
+// URL de l'API segons la configuració d'Xcode (l'app la llegeix d'Info.plist,
+// clau CineCatApiUrl):
+//  - Debug   → el backend local (el simulador veu el Mac com a localhost);
+//  - Release → producció a Railway (HTTPS).
+// Als .xcconfig, "//" comença un comentari: per escriure "https://" cal el
+// truc de posar-hi una variable buida enmig: "https:/$()/".
+API_URL = http:/$()/localhost:8080
+API_URL[config=Release] = https:/$()/backend-production-e587.up.railway.app

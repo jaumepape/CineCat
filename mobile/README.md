@@ -51,6 +51,23 @@ xcrun simctl launch booted cat.cinecat.app
 
 La compilació d'Xcode crida Gradle (`:shared:embedAndSignAppleFrameworkForXcode`) per generar el framework `Shared`. L'app es connecta a `http://localhost:8080`.
 
+### Contra producció
+
+L'URL de l'API depèn del build:
+
+| | Android | iOS |
+|---|---|---|
+| **Debug** | `http://10.0.2.2:8080` (backend local) | `http://localhost:8080` |
+| **Release** | `https://backend-production-e587.up.railway.app` | la mateixa |
+| On es defineix | `androidApp/build.gradle.kts` (`BuildConfig.API_URL`) | `iosApp/Configuration/Config.xcconfig` → `Info.plist` (`CineCatApiUrl`) |
+
+```bash
+./gradlew :androidApp:installRelease                                   # Android contra producció
+./gradlew :androidApp:installDebug -Pcinecat.apiUrl=https://…          # qualsevol URL, en debug
+```
+
+A iOS, tria la configuració **Release** a l'esquema d'Xcode (o `xcodebuild -configuration Release`). La release d'Android es signa amb la clau de debug només per poder-la instal·lar a l'emulador; publicar a les botigues queda fora d'abast.
+
 ### Tests
 
 ```bash
