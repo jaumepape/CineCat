@@ -29,11 +29,17 @@ COPY backend/ ./
 # CGO_ENABLED=0 → binari estàtic, sense dependències de C: corre en una imatge
 # mínima. -ldflags "-s -w" treu informació de depuració (binari més petit).
 RUN CGO_ENABLED=0 go build -ldflags="-s -w" -o /server ./cmd/server
+# createadmin també va a la imatge: a Railway la BD no és accessible des de
+# fora (sense adreça pública), així que el primer admin es crea DINS del
+# contenidor, que ja té DATABASE_URL: `railway ssh --service backend` i
+# `/app/createadmin -email … -alias …` (la contrasenya es demana sense eco).
+RUN CGO_ENABLED=0 go build -ldflags="-s -w" -o /createadmin ./cmd/createadmin
 
 # --- Etapa 3: runtime --------------------------------------------------------
 FROM alpine:3.20
 WORKDIR /app
 COPY --from=api /server /app/server
+COPY --from=api /createadmin /app/createadmin
 COPY --from=web /src/web/dist /app/web
 
 # L'API serveix el web des d'aquí (handlers.Web). Els pòsters van a

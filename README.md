@@ -146,9 +146,12 @@ railway variables --service backend --set UPLOAD_DIR=/app/uploads
 
 ### Primer admin a Railway
 
-`createadmin` s'executa des de la teva màquina contra la BD de Railway. Des de fora de Railway cal la URL **pública** de Postgres (`DATABASE_PUBLIC_URL`), no la interna:
+La BD de Railway **no té adreça pública** (millor així: només hi arriba el backend, per la xarxa interna). Per això `createadmin` va dins la imatge Docker i s'executa **dins del contenidor**, que ja té `DATABASE_URL`:
 
 ```bash
-cd backend
-DATABASE_URL='<DATABASE_PUBLIC_URL del servei Postgres>' go run ./cmd/createadmin -email admin@exemple.cat -alias admin
+ssh-keygen -t ed25519                 # només la primera vegada, si no tens cap clau SSH
+railway ssh --service backend         # obre una shell dins del contenidor
+/app/createadmin -email admin@exemple.cat -alias admin
 ```
+
+La contrasenya es demana sense mostrar-la. Si l'email ja és d'un usuari registrat al web, el promociona a admin.
