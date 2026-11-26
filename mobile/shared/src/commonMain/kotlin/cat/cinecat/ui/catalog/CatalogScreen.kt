@@ -44,7 +44,7 @@ import cat.cinecat.ui.components.PrimaryButton
 import cat.cinecat.ui.theme.CineColors
 import cat.cinecat.ui.theme.CineFonts
 import cat.cinecat.util.GENRES
-import cat.cinecat.util.formatCount
+import cat.cinecat.util.formatMovieCount
 
 /** Pantalla 06 · Catàleg mòbil: cerca, xips de gènere i graella de 2 columnes. */
 @Composable
@@ -97,7 +97,7 @@ fun CatalogScreen(
                 if (state.status == CatalogState.Status.Loaded) {
                     Spacer(Modifier.width(8.dp))
                     Text(
-                        "· ${formatCount(state.movies.size)} pel·lícules",
+                        "· ${formatMovieCount(state.movies.size)}",
                         fontFamily = CineFonts.mono,
                         fontSize = 12.5.sp,
                         color = CineColors.TextFaint,
