@@ -40,7 +40,7 @@ type client struct {
 // NewRateLimiter crea el limitador i arrenca una neteja periòdica perquè el
 // mapa d'IPs no creixi indefinidament.
 //
-// trustProxy: si és true, la IP es llegeix de X-Forwarded-For (vegeu clientIP).
+// trustProxy: si és true, la IP es llegeix de X-Real-IP (vegeu clientIP).
 func NewRateLimiter(every time.Duration, burst int, trustProxy bool) *RateLimiter {
 	rl := &RateLimiter{every: every, burst: burst, trustProxy: trustProxy, clients: map[string]*client{}}
 	go rl.cleanup()
@@ -93,16 +93,18 @@ func (rl *RateLimiter) cleanup() {
 // Sense proxy, és l'adreça de la connexió TCP (RemoteAddr): no es pot falsificar.
 //
 // A Railway, però, entre el visitant i nosaltres hi ha el proxy de Railway, i
-// RemoteAddr és sempre la IP del proxy: tothom compartiria el mateix límit. El
-// proxy afegeix la IP real al final de la capçalera X-Forwarded-For. Agafem
-// l'ÚLTIMA entrada, la que ha escrit el proxy: les anteriors les pot haver
-// posat el client i són falsificables. Per això només ens en fiem si
-// TRUST_PROXY està activat (és a dir, si sabem que hi ha un proxy davant).
+// RemoteAddr és sempre una IP interna: tothom compartiria el mateix límit.
+// Railway posa la IP real del visitant a X-Real-IP (docs: "Specs & Limits",
+// Request Headers) i la sobreescriu: un client no la pot falsificar (comprovat
+// contra producció: enviant una X-Real-IP inventada, el límit continua
+// comptant la IP real). En canvi, l'última entrada de X-Forwarded-For és la
+// d'un proxy intern que canvia a cada petició, i no serveix per limitar.
+// Només ens fiem d'aquestes capçaleres si TRUST_PROXY està activat (és a dir,
+// si sabem que hi ha un proxy davant que les escriu).
 func clientIP(r *http.Request, trustProxy bool) string {
 	if trustProxy {
-		if xff := r.Header.Get("X-Forwarded-For"); xff != "" {
-			parts := strings.Split(xff, ",")
-			return strings.TrimSpace(parts[len(parts)-1])
+		if ip := strings.TrimSpace(r.Header.Get("X-Real-IP")); ip != "" {
+			return ip
 		}
 	}
 	host, _, err := net.SplitHostPort(r.RemoteAddr)

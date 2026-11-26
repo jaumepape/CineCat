@@ -58,7 +58,7 @@ L'URL de l'API depèn del build:
 | | Android | iOS |
 |---|---|---|
 | **Debug** | `http://10.0.2.2:8080` (backend local) | `http://localhost:8080` |
-| **Release** | `https://backend-production-e587.up.railway.app` | la mateixa |
+| **Release** | `https://backend-production-c8ff2dcf.up.railway.app` | la mateixa |
 | On es defineix | `androidApp/build.gradle.kts` (`BuildConfig.API_URL`) | `iosApp/Configuration/Config.xcconfig` → `Info.plist` (`CineCatApiUrl`) |
 
 ```bash

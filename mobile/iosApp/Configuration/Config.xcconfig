@@ -11,4 +11,4 @@ APP_NAME=CineCat
 // Als .xcconfig, "//" comença un comentari: per escriure "https://" cal el
 // truc de posar-hi una variable buida enmig: "https:/$()/".
 API_URL = http:/$()/localhost:8080
-API_URL[config=Release] = https:/$()/backend-production-e587.up.railway.app
+API_URL[config=Release] = https:/$()/backend-production-c8ff2dcf.up.railway.app

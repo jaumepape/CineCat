@@ -17,7 +17,7 @@ dependencies {
 //  - release → producció a Railway (HTTPS).
 // Es pot forçar per a qualsevol build amb -Pcinecat.apiUrl=https://… (p. ex.
 // per provar un debug contra producció).
-val prodApiUrl = "https://backend-production-e587.up.railway.app"
+val prodApiUrl = "https://backend-production-c8ff2dcf.up.railway.app"
 val apiUrlOverride = providers.gradleProperty("cinecat.apiUrl").orNull
 
 android {

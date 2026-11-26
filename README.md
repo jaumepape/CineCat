@@ -30,7 +30,7 @@ Variables d'entorn:
 - `PORT` (opcional, per defecte `8080`).
 - `UPLOAD_DIR` (opcional, per defecte `uploads`, relatiu a on s'executa: `backend/uploads` amb `go run`). Carpeta on es desen els pòsters; es crea sola.
 - `MAX_UPLOAD_MB` (opcional, per defecte `5`). Mida màxima d'un pòster.
-- `TRUST_PROXY` (opcional, per defecte fals). Posa-la a `true` només si hi ha un proxy davant (Railway): llavors la IP del visitant, per al límit de valoracions, es llegeix de `X-Forwarded-For`.
+- `TRUST_PROXY` (opcional, per defecte fals). Posa-la a `true` només si hi ha un proxy davant (Railway): llavors la IP del visitant, per al límit de valoracions, es llegeix de `X-Real-IP`, que Railway escriu (i sobreescriu: no es pot falsificar).
 
 En arrencar, **aplica automàticament les migracions** pendents de `backend/migrations/`.
 
@@ -122,6 +122,8 @@ Vite reenvia `/api` i `/uploads` al backend (proxy a `web/vite.config.js`), aix�
 
 ## Desplegament a Railway
 
+**En producció:** <https://backend-production-c8ff2dcf.up.railway.app> (web, API a `/api` i pòsters a `/uploads`). Projecte `CineCat` del workspace *vdatanet's Projects*: serveis `backend` (amb el volum `backend-volume` a `/app/uploads`) i `Postgres`.
+
 Un sol servei (`backend`) amb la imatge del [`Dockerfile`](Dockerfile) de l'arrel: l'API Go serveix també el web (§9, Opció A), i els pòsters viuen en un volum. La configuració del build i el healthcheck (`/health`) són a [`railway.json`](railway.json). Es desplega des de l'**arrel** del repo:
 
 ```bash
@@ -137,15 +139,19 @@ Variables d'entorn a Railway: `PORT` (la injecta Railway), `DATABASE_URL` (refer
 El disc d'un contenidor **s'esborra a cada desplegament**. Perquè els pòsters sobrevisquin, el servei `backend` necessita un **volum persistent** muntat a `/app/uploads` (el `WORKDIR` de la imatge és `/app`):
 
 ```bash
-railway volume --service backend add --mount-path /app/uploads
+railway service backend            # enllaça el directori al servei
+railway volume add --mount-path /app/uploads
 railway variables --service backend --set UPLOAD_DIR=/app/uploads
 ```
 
 ### Primer admin a Railway
 
-`createadmin` s'executa des de la teva màquina contra la BD de Railway. Des de fora de Railway cal la URL **pública** de Postgres (`DATABASE_PUBLIC_URL`), no la interna:
+La BD de Railway **no té adreça pública** (millor així: només hi arriba el backend, per la xarxa interna). Per això `createadmin` va dins la imatge Docker i s'executa **dins del contenidor**, que ja té `DATABASE_URL`:
 
 ```bash
-cd backend
-DATABASE_URL='<DATABASE_PUBLIC_URL del servei Postgres>' go run ./cmd/createadmin -email admin@exemple.cat -alias admin
+ssh-keygen -t ed25519                 # només la primera vegada, si no tens cap clau SSH
+railway ssh --service backend         # obre una shell dins del contenidor
+/app/createadmin -email admin@exemple.cat -alias admin
 ```
+
+La contrasenya es demana sense mostrar-la. Si l'email ja és d'un usuari registrat al web, el promociona a admin.
