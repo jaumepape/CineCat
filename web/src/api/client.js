@@ -69,9 +69,21 @@ export async function request(path, { method = 'GET', body, signal, auth = true 
       onUnauthorized()
       if (method === 'GET') return request(path, { method, signal, auth: false })
     }
-    throw new ApiError(res.status, data?.error ?? `Error ${res.status}`)
+    throw new ApiError(res.status, data?.error ? sentence(data.error) : `Error ${res.status}`)
   }
   return data
+}
+
+/**
+ * L'API escriu els errors com a fragments en minúscula ("la contrasenya ha de
+ * tenir…"), pensats per a qualsevol client. Per mostrar-los sols en un quadre
+ * d'error, en fem una frase: majúscula inicial i punt final.
+ */
+function sentence(text) {
+  const t = text.trim()
+  if (!t) return t
+  const capital = t.charAt(0).toLocaleUpperCase('ca') + t.slice(1)
+  return /[.!?…]$/.test(capital) ? capital : `${capital}.`
 }
 
 /** Construeix "?a=1&b=2" ometent els valors buits. */
