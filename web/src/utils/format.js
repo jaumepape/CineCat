@@ -22,6 +22,11 @@ export function formatCount(n) {
   return countFormat.format(n)
 }
 
+/** 1 → "1 pel·lícula"; 0 o 7 → "0 pel·lícules", "7 pel·lícules". */
+export function formatMovieCount(n) {
+  return `${formatCount(n)} ${n === 1 ? 'pel·lícula' : 'pel·lícules'}`
+}
+
 /** 1 → "1 valoració"; 1243 → "1.243 valoracions". */
 export function formatRatingCount(n) {
   return `${formatCount(n)} ${n === 1 ? 'valoració' : 'valoracions'}`

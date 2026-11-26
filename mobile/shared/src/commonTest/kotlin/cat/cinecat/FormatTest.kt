@@ -3,6 +3,8 @@ package cat.cinecat
 import cat.cinecat.util.formatCount
 import cat.cinecat.util.formatDate
 import cat.cinecat.util.formatDuration
+import cat.cinecat.util.formatMovieCount
+import cat.cinecat.util.formatRatingCount
 import cat.cinecat.util.formatScore
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -22,6 +24,15 @@ class FormatTest {
         assertEquals("999", formatCount(999))
         assertEquals("1.243", formatCount(1243))
         assertEquals("1.234.567", formatCount(1234567))
+    }
+
+    @Test
+    fun singularIPlural() {
+        assertEquals("1 pel·lícula", formatMovieCount(1))
+        assertEquals("0 pel·lícules", formatMovieCount(0))
+        assertEquals("7 pel·lícules", formatMovieCount(7))
+        assertEquals("1 valoració", formatRatingCount(1))
+        assertEquals("1.243 valoracions", formatRatingCount(1243))
     }
 
     @Test

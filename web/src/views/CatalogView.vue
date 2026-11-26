@@ -9,7 +9,7 @@ import { useRoute, useRouter } from 'vue-router'
 import MovieCard from '../components/MovieCard.vue'
 import { useCatalogStore } from '../stores/catalog.js'
 import { GENRES } from '../utils/genres.js'
-import { formatCount } from '../utils/format.js'
+import { formatMovieCount } from '../utils/format.js'
 
 const route = useRoute()
 const router = useRouter()
@@ -91,7 +91,7 @@ const hasFilters = computed(() => Boolean(q.value || genre.value))
     <div class="heading">
       <h1>
         Catàleg
-        <span v-if="catalog.status === 'loaded'" class="count mono">· {{ formatCount(catalog.movies.length) }} pel·lícules</span>
+        <span v-if="catalog.status === 'loaded'" class="count mono">· {{ formatMovieCount(catalog.movies.length) }}</span>
       </h1>
       <label class="sort">
         Ordena:

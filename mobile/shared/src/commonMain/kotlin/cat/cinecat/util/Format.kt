@@ -21,6 +21,9 @@ fun formatCount(n: Int): String {
     return if (n < 0) "-$grouped" else grouped
 }
 
+/** 1 → "1 pel·lícula"; 0 o 7 → "0 pel·lícules", "7 pel·lícules". */
+fun formatMovieCount(n: Int): String = "${formatCount(n)} ${if (n == 1) "pel·lícula" else "pel·lícules"}"
+
 /** 1 → "1 valoració"; 1243 → "1.243 valoracions". */
 fun formatRatingCount(n: Int): String = "${formatCount(n)} ${if (n == 1) "valoració" else "valoracions"}"
 
